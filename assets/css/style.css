@@ -1,0 +1,1076 @@
+/* =========================================================
+   OUR STORY — Global Stylesheet
+   Aesthetic: Luxury Editorial / Cinematic Dark Mode
+   ========================================================= */
+
+/* --- Google Fonts Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
+
+/* =========================================================
+   01. CSS CUSTOM PROPERTIES (Design Tokens)
+   ========================================================= */
+:root {
+  /* Colors */
+  --color-void:       #050505;    /* True cinematic black */
+  --color-surface:    #0a0a0a;    /* Slightly elevated surface */
+  --color-border:     rgba(255, 255, 255, 0.06);
+  --color-text:       #f5f0e8;    /* Warm parchment white */
+  --color-text-muted: rgba(245, 240, 232, 0.35);
+  --color-text-dim:   rgba(245, 240, 232, 0.15);
+  --color-accent:     #c8a96e;    /* Aged gold */
+  --color-accent-dim: rgba(200, 169, 110, 0.15);
+
+  /* Typography */
+  --font-serif:       'Playfair Display', 'Georgia', serif;
+  --font-body:        'Cormorant Garamond', 'Georgia', serif;
+  --font-ui:          'Jost', 'Helvetica Neue', sans-serif;
+
+  /* Spacing Scale */
+  --space-xs:   0.5rem;     /* 8px  */
+  --space-sm:   1rem;       /* 16px */
+  --space-md:   2rem;       /* 32px */
+  --space-lg:   4rem;       /* 64px */
+  --space-xl:   8rem;       /* 128px */
+  --space-2xl:  14rem;      /* 224px */
+  --space-3xl:  20rem;      /* 320px */
+
+  /* Layout */
+  --header-height: 72px;
+  --max-width:     1440px;
+  --content-width: 960px;
+
+  /* Motion */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.83, 0, 0.17, 1);
+  --duration-fast:   200ms;
+  --duration-mid:    500ms;
+  --duration-slow:   900ms;
+  --duration-reveal: 1400ms;
+}
+
+
+/* =========================================================
+   02. CSS RESET & BASE
+   ========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 1px; }
+::-webkit-scrollbar-track { background: var(--color-void); }
+::-webkit-scrollbar-thumb { background: var(--color-border); }
+
+/* Selection */
+::selection {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}
+
+/* Links */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+}
+
+/* =========================================================
+   03. TYPOGRAPHY SYSTEM
+   ========================================================= */
+.t-display {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.t-display--italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.t-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.t-subheading {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 200;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.t-body {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--color-text-muted);
+}
+
+.t-caption {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 200;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+.t-accent {
+  color: var(--color-accent);
+}
+
+/* =========================================================
+   04. LAYOUT UTILITIES
+   ========================================================= */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.5rem, 5vw, 6rem);
+  padding-right: clamp(1.5rem, 5vw, 6rem);
+}
+
+.container--narrow {
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Vertical rhythm — generous whitespace between sections */
+section {
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Thin gold rule */
+.rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.rule--accent {
+  width: 40px;
+  height: 1px;
+  background: var(--color-accent);
+  display: block;
+}
+
+
+/* =========================================================
+   05. HEADER / NAVIGATION
+   ========================================================= */
+#site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  /* Starts transparent, gains blur on scroll via JS class */
+  background: transparent;
+  transition: background var(--duration-mid) var(--ease-out),
+              border-color var(--duration-mid) var(--ease-out);
+  border-bottom: 1px solid transparent;
+}
+
+#site-header.is-scrolled {
+  background: rgba(5, 5, 5, 0.85);
+  border-bottom-color: var(--color-border);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Logo / wordmark */
+.header__logo {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--color-text);
+  text-transform: uppercase;
+}
+
+.header__logo span {
+  font-style: italic;
+  font-weight: 400;
+  margin-right: 0.1em;
+}
+
+/* Nav links */
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  list-style: none;
+}
+
+.header__nav li a {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 200;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  position: relative;
+}
+
+.header__nav li a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-accent);
+  transition: width var(--duration-mid) var(--ease-out);
+}
+
+.header__nav li a:hover {
+  color: var(--color-text);
+}
+
+.header__nav li a:hover::after {
+  width: 100%;
+}
+
+/* Days Together counter */
+.header__counter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.counter__number {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1;
+  /* subtle shimmer on load */
+  animation: counterReveal 1.2s var(--ease-out) forwards;
+}
+
+.counter__label {
+  font-family: var(--font-ui);
+  font-size: 0.48rem;
+  font-weight: 200;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+@keyframes counterReveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =========================================================
+   06. HERO SECTION
+   ========================================================= */
+#hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;          /* full viewport height */
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding-bottom: clamp(3rem, 8vh, 6rem);
+}
+
+/* Background image layer */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  filter: brightness(0.45) contrast(1.05);
+  /* Subtle Ken Burns drift */
+  animation: heroDrift 28s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+@keyframes heroDrift {
+  from { transform: scale(1.04) translateX(-1%); }
+  to   { transform: scale(1.00) translateX(1%);  }
+}
+
+/* Layered vignette gradient */
+.hero__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    /* bottom-up scrim for text legibility */
+    linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.4) 40%, transparent 70%),
+    /* sides vignette */
+    linear-gradient(to right, rgba(5,5,5,0.3) 0%, transparent 40%, transparent 60%, rgba(5,5,5,0.3) 100%),
+    /* top bar for header */
+    linear-gradient(to bottom, rgba(5,5,5,0.6) 0%, transparent 25%);
+  pointer-events: none;
+}
+
+/* Film grain overlay */
+.hero__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Hero text content */
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__eyebrow {
+  margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hero__eyebrow .rule--accent {
+  display: inline-block;
+}
+
+.hero__title-block {
+  overflow: hidden;
+  margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+/* Each word of the title animates in */
+.hero__title-line {
+  display: block;
+  overflow: hidden;
+}
+
+.hero__title-line span {
+  display: block;
+  transform: translateY(110%);
+  animation: titleReveal var(--duration-reveal) var(--ease-out) forwards;
+}
+
+.hero__title-line:nth-child(1) span { animation-delay: 0.4s; }
+.hero__title-line:nth-child(2) span { animation-delay: 0.6s; }
+.hero__title-line:nth-child(3) span { animation-delay: 0.8s; }
+
+@keyframes titleReveal {
+  to { transform: translateY(0); }
+}
+
+.hero__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-out) 1.4s forwards;
+}
+
+.hero__meta-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border);
+}
+
+/* Scroll indicator */
+.hero__scroll {
+  position: absolute;
+  bottom: clamp(2rem, 5vh, 4rem);
+  right: clamp(1.5rem, 5vw, 6rem);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-out) 2s forwards;
+}
+
+.hero__scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--color-accent), transparent);
+  animation: scrollPulse 2.5s ease-in-out 2s infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.1); }
+}
+
+
+/* =========================================================
+   07. SHARED ANIMATION UTILITIES
+   ========================================================= */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Intersection Observer reveal class */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--duration-slow) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal--delay-1 { transition-delay: 0.1s; }
+.reveal--delay-2 { transition-delay: 0.25s; }
+.reveal--delay-3 { transition-delay: 0.4s; }
+.reveal--delay-4 { transition-delay: 0.6s; }
+
+
+/* =========================================================
+   08. SECTION PLACEHOLDERS (for future sections)
+   ========================================================= */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: var(--space-xl);
+}
+
+.section-label .rule {
+  flex: 1;
+  max-width: 60px;
+}
+
+
+/* =========================================================
+   09. CUSTOM CURSOR
+   ========================================================= */
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent);
+  background: transparent;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width var(--duration-fast) var(--ease-out),
+              height var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
+  mix-blend-mode: difference;
+}
+
+#custom-cursor.is-expanded {
+  width: 36px;
+  height: 36px;
+  background: var(--color-accent-dim);
+}
+
+/* Hide custom cursor on touch devices */
+@media (hover: none) {
+  #custom-cursor { display: none; }
+  body { cursor: auto; }
+}
+
+@media (hover: hover) {
+  body { cursor: none; }
+  a, button { cursor: none; }
+}
+
+
+/* =========================================================
+   10. CHAPTERS — Shared Styles
+   ========================================================= */
+
+/* Container for all chapters */
+#featured-chapters {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Individual chapter article */
+.chapter {
+  padding-top: clamp(5rem, 12vh, 10rem);
+  padding-bottom: clamp(5rem, 12vh, 10rem);
+  position: relative;
+}
+
+/* ── Chapter Header ── */
+.chapter__header {
+  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+}
+
+.chapter__numeral {
+  font-size: clamp(4rem, 10vw, 9rem);
+  line-height: 0.85;
+  color: var(--color-text-dim);
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.03em;
+  /* Subtle animation already handled by .reveal */
+}
+
+.chapter__meta {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.chapter__month {
+  color: var(--color-text-muted);
+}
+
+/* ── Chapter Description ── */
+.chapter__text {
+  margin-top: clamp(1.5rem, 3vh, 3rem);
+}
+
+.chapter__description {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.85;
+  color: var(--color-text-muted);
+  max-width: 42ch;
+}
+
+/* ── Song Button ── */
+.chapter__song-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  padding: 0.6rem 1.2rem 0.6rem 0.9rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
+}
+
+.chapter__song-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+
+.chapter__song-btn.is-playing {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.chapter__song-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chapter__song-btn.is-playing .chapter__song-icon {
+  /* Becomes a pause indicator */
+  opacity: 0.6;
+}
+
+/* ── Image wrappers ── */
+.chapter__img-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.chapter__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--duration-slow) var(--ease-out),
+              filter var(--duration-slow) var(--ease-out);
+  filter: brightness(0.92) contrast(1.02);
+}
+
+.chapter__img-wrap:hover img {
+  transform: scale(1.025);
+  filter: brightness(1) contrast(1.02);
+}
+
+/* ── Chapter Divider ── */
+.chapter-divider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.chapter-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.chapter-divider__glyph {
+  font-family: var(--font-serif);
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0;
+}
+
+
+/* =========================================================
+   11. LAYOUT A — editorial-left
+   Primary tall image left | header + text + 2 images right
+   ========================================================= */
+.editorial-left .chapter__grid--left {
+  display: grid;
+  grid-template-columns: 55% 1fr;
+  gap: clamp(3rem, 6vw, 7rem);
+  align-items: start;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+}
+
+.editorial-left .chapter__col-primary {
+  /* Sticky image on scroll for depth effect */
+  position: sticky;
+  top: calc(var(--header-height) + 2rem);
+}
+
+.editorial-left .chapter__img--primary {
+  height: clamp(500px, 72vh, 820px);
+}
+
+.editorial-left .chapter__col-secondary {
+  padding-top: clamp(3rem, 10vh, 8rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.editorial-left .chapter__img-pair {
+  margin-top: clamp(2.5rem, 5vh, 4.5rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.editorial-left .chapter__img--sm {
+  height: clamp(180px, 22vw, 280px);
+}
+
+.editorial-left .chapter__img--offset {
+  margin-top: 3rem; /* vertical stagger */
+}
+
+
+/* =========================================================
+   12. LAYOUT B — editorial-right
+   Mirrored of A: text left, tall image right
+   ========================================================= */
+.editorial-right .chapter__grid--right {
+  display: grid;
+  grid-template-columns: 1fr 55%;
+  gap: clamp(3rem, 6vw, 7rem);
+  align-items: start;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+}
+
+.editorial-right .chapter__col-primary {
+  position: sticky;
+  top: calc(var(--header-height) + 2rem);
+}
+
+.editorial-right .chapter__img--primary {
+  height: clamp(500px, 72vh, 820px);
+}
+
+.editorial-right .chapter__col-secondary {
+  padding-top: clamp(3rem, 10vh, 8rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.editorial-right .chapter__img-pair {
+  margin-top: clamp(2.5rem, 5vh, 4.5rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.editorial-right .chapter__img--sm {
+  height: clamp(180px, 22vw, 280px);
+}
+
+.editorial-right .chapter__img--offset {
+  margin-top: -3rem; /* stagger opposite direction */
+}
+
+
+/* =========================================================
+   13. LAYOUT C — editorial-cinematic
+   Full-bleed image with text overlay, aside image
+   ========================================================= */
+.editorial-cinematic .chapter__cinematic {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+  position: relative;
+}
+
+.editorial-cinematic .chapter__cinematic-img {
+  position: relative;
+  width: 100%;
+  height: clamp(400px, 70vh, 760px);
+  overflow: hidden;
+}
+
+.editorial-cinematic .chapter__cinematic-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.55) contrast(1.05);
+  transition: transform var(--duration-slow) var(--ease-out),
+              filter var(--duration-slow) var(--ease-out);
+}
+
+.editorial-cinematic .chapter__cinematic-img:hover img {
+  transform: scale(1.02);
+  filter: brightness(0.65) contrast(1.05);
+}
+
+.editorial-cinematic .chapter__cinematic-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5,5,5,0.9) 0%,
+    rgba(5,5,5,0.3) 50%,
+    transparent 100%
+  );
+}
+
+/* Text floats over the bottom of the image */
+.editorial-cinematic .chapter__cinematic-content {
+  position: absolute;
+  bottom: clamp(2rem, 6vh, 5rem);
+  left: clamp(1.5rem, 5vw, 6rem);
+  max-width: 560px;
+  z-index: 2;
+}
+
+.editorial-cinematic .chapter__cinematic-content .chapter__description {
+  color: rgba(245, 240, 232, 0.65);
+}
+
+/* Aside image floats bottom-right, out of the main image */
+.editorial-cinematic .chapter__cinematic-aside {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 6rem);
+  bottom: -clamp(3rem, 8vh, 6rem);
+  width: clamp(160px, 20vw, 280px);
+  z-index: 3;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.editorial-cinematic .chapter__img--aside {
+  height: clamp(200px, 30vh, 380px);
+}
+
+
+/* =========================================================
+   14. LAYOUT D — editorial-triptych
+   Three staggered images of varying heights, caption below
+   ========================================================= */
+.editorial-triptych .chapter__triptych {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+}
+
+.editorial-triptych .chapter__triptych-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 7vh, 6rem);
+}
+
+.editorial-triptych .chapter__triptych-header .chapter__meta {
+  justify-content: center;
+}
+
+.editorial-triptych .chapter__triptych-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: end; /* stagger tops by giving each different height */
+}
+
+.editorial-triptych .chapter__img--t1 {
+  height: clamp(320px, 42vw, 580px);
+  align-self: center;
+}
+
+.editorial-triptych .chapter__img--t2 {
+  height: clamp(420px, 55vw, 720px);
+  /* Tallest — center column rises above others */
+}
+
+.editorial-triptych .chapter__img--t3 {
+  height: clamp(280px, 36vw, 500px);
+  margin-top: 4rem; /* pushed down */
+}
+
+.editorial-triptych .chapter__triptych-caption {
+  max-width: 680px;
+  margin: clamp(3rem, 7vh, 6rem) auto 0;
+  text-align: center;
+}
+
+.editorial-triptych .chapter__triptych-caption .chapter__description {
+  max-width: none;
+}
+
+
+/* =========================================================
+   15. LAYOUT E — editorial-asymmetric
+   Full-width hero image bleeds left, small offset image, text floats right
+   ========================================================= */
+.editorial-asymmetric .chapter__asymmetric {
+  display: grid;
+  grid-template-columns: 58% 1fr;
+  grid-template-rows: auto auto;
+  gap: 0;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding-left: clamp(1.5rem, 5vw, 6rem);
+  /* Intentionally no right padding — hero bleeds to right edge */
+  align-items: start;
+}
+
+.editorial-asymmetric .chapter__asym-hero {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  height: clamp(480px, 75vh, 860px);
+  overflow: hidden;
+  /* Bleed slightly past the left container edge for drama */
+  margin-left: calc(-1 * clamp(1.5rem, 5vw, 6rem));
+}
+
+.editorial-asymmetric .chapter__asym-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.88) contrast(1.03);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.editorial-asymmetric .chapter__asym-hero:hover img {
+  transform: scale(1.02);
+}
+
+.editorial-asymmetric .chapter__asym-text {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  padding: clamp(4rem, 10vh, 8rem) clamp(2rem, 4vw, 5rem) 3rem;
+}
+
+.editorial-asymmetric .chapter__asym-small {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  overflow: hidden;
+  height: clamp(200px, 26vh, 340px);
+  margin: 0 clamp(1.5rem, 3vw, 4rem) 0 clamp(2rem, 4vw, 5rem);
+  /* Offset down for asymmetric feel */
+  align-self: end;
+}
+
+.editorial-asymmetric .chapter__asym-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.editorial-asymmetric .chapter__asym-small:hover img {
+  transform: scale(1.03);
+}
+
+
+/* =========================================================
+   16. RESPONSIVE BREAKPOINTS
+   ========================================================= */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+
+  .header__nav {
+    gap: var(--space-md);
+  }
+
+  .header__nav li a {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+  }
+
+  .hero__scroll {
+    display: none;
+  }
+
+  /* All layouts collapse to single-column stack on mobile */
+  .editorial-left .chapter__grid--left,
+  .editorial-right .chapter__grid--right {
+    grid-template-columns: 1fr;
+  }
+
+  .editorial-left .chapter__col-primary,
+  .editorial-right .chapter__col-primary {
+    position: relative;
+    top: auto;
+  }
+
+  .editorial-left .chapter__img--primary,
+  .editorial-right .chapter__img--primary {
+    height: clamp(300px, 55vw, 500px);
+  }
+
+  .editorial-left .chapter__col-secondary,
+  .editorial-right .chapter__col-secondary {
+    padding-top: 0;
+  }
+
+  .editorial-right .chapter__grid--right {
+    /* Reorder so text comes last on mobile */
+    grid-template-areas:
+      "img"
+      "text";
+  }
+  .editorial-right .chapter__col-primary { grid-area: img; }
+  .editorial-right .chapter__col-secondary { grid-area: text; }
+
+  .editorial-triptych .chapter__triptych-images {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .editorial-triptych .chapter__img--t2 {
+    grid-column: 1 / -1;
+    height: clamp(280px, 60vw, 420px);
+  }
+
+  .editorial-asymmetric .chapter__asymmetric {
+    grid-template-columns: 1fr;
+    padding-left: clamp(1.5rem, 5vw, 6rem);
+  }
+
+  .editorial-asymmetric .chapter__asym-hero {
+    grid-row: 1;
+    grid-column: 1;
+    height: clamp(300px, 55vw, 480px);
+    margin-left: -clamp(1.5rem, 5vw, 6rem);
+    margin-right: -clamp(1.5rem, 5vw, 6rem);
+  }
+
+  .editorial-asymmetric .chapter__asym-text { grid-row: 2; grid-column: 1; padding: 2.5rem 0; }
+  .editorial-asymmetric .chapter__asym-small { grid-row: 3; grid-column: 1; margin: 0; height: 220px; }
+
+  .editorial-cinematic .chapter__cinematic-aside {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: clamp(120px, 40vw, 200px);
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header__logo {
+    font-size: 0.9rem;
+  }
+  .counter__number {
+    font-size: 0.9rem;
+  }
+
+  .editorial-triptych .chapter__triptych-images {
+    grid-template-columns: 1fr;
+  }
+
+  .editorial-triptych .chapter__img--t1,
+  .editorial-triptych .chapter__img--t2,
+  .editorial-triptych .chapter__img--t3 {
+    height: clamp(250px, 75vw, 400px);
+    margin-top: 0;
+  }
+}
+

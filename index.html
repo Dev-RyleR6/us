@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Our Story — A cinematic editorial chronicle of two lives intertwined. A private archive of moments, memory, and love." />
+  <meta name="theme-color" content="#050505" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Our Story" />
+  <meta property="og:description" content="A cinematic editorial chronicle of two lives intertwined." />
+  <meta property="og:type" content="website" />
+
+  <title>Our Story</title>
+
+  <!-- Preconnect for Google Fonts performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CUSTOM CURSOR (luxury touch — desktop only)
+  ═══════════════════════════════════════════════════════ -->
+  <div id="custom-cursor" aria-hidden="true"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       HEADER — Fixed Navigation
+  ═══════════════════════════════════════════════════════ -->
+  <header id="site-header" role="banner">
+    <div class="container header__inner">
+
+      <!-- Wordmark -->
+      <a href="#hero" class="header__logo" aria-label="Our Story — Return to top">
+        <span>Our</span> Story
+      </a>
+
+      <!-- Navigation Links -->
+      <nav role="navigation" aria-label="Primary navigation">
+        <ul class="header__nav">
+          <li>
+            <a href="#featured" id="nav-featured">Featured</a>
+          </li>
+          <li>
+            <a href="#archive" id="nav-archive">Archive</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Days Together Counter -->
+      <div class="header__counter" aria-label="Days we have been together">
+        <span class="counter__number" id="days-count">—</span>
+        <span class="counter__label">Days Together</span>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO — Full-Screen Cinematic Opening
+  ═══════════════════════════════════════════════════════ -->
+  <section id="hero" aria-label="Hero">
+
+    <!-- Background photograph -->
+    <img
+      src="assets/img/hero.png"
+      alt="A cinematic silhouette of two people in a vast, dimly lit space"
+      class="hero__bg"
+      loading="eager"
+      fetchpriority="high"
+    />
+
+    <!-- Gradient vignette overlay -->
+    <div class="hero__vignette" aria-hidden="true"></div>
+
+    <!-- Film grain texture -->
+    <div class="hero__grain" aria-hidden="true"></div>
+
+    <!-- Text content -->
+    <div class="container hero__content">
+
+      <div class="hero__eyebrow reveal">
+        <span class="rule--accent"></span>
+        <span class="t-subheading">A Private Archive</span>
+      </div>
+
+      <div class="hero__title-block">
+        <h1>
+          <span class="hero__title-line t-display">
+            <span>Our</span>
+          </span>
+          <span class="hero__title-line t-display--italic">
+            <span>Story</span>
+          </span>
+        </h1>
+      </div>
+
+      <div class="hero__meta">
+        <p class="t-caption">Est. 2023</p>
+        <div class="hero__meta-divider" aria-hidden="true"></div>
+        <p class="t-caption">Ongoing</p>
+        <div class="hero__meta-divider" aria-hidden="true"></div>
+        <p class="t-caption">A Chronicle of Two</p>
+      </div>
+
+    </div><!-- /.container -->
+
+    <!-- Scroll indicator -->
+    <div class="hero__scroll" aria-hidden="true">
+      <span class="t-caption" style="writing-mode: vertical-rl; letter-spacing: 0.2em;">Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+
+  </section><!-- /#hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       FEATURED — Relationship Chapters
+  ═══════════════════════════════════════════════════════ -->
+  <section id="featured" aria-label="Featured moments">
+
+    <!-- Section intro header -->
+    <div class="container" style="padding-top: clamp(6rem, 15vh, 12rem); padding-bottom: clamp(3rem, 6vh, 5rem);">
+      <div class="section-label reveal">
+        <span class="rule--accent"></span>
+        <span class="t-subheading">Featured</span>
+      </div>
+      <h2 class="t-headline reveal reveal--delay-2" style="max-width: 18ch; margin-top: 2rem;">
+        A year written
+        <em>in moments.</em>
+      </h2>
+    </div>
+
+    <!-- Chapter spreads rendered by chapters.js -->
+    <div id="featured-chapters" aria-label="Relationship chapters"></div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       PLACEHOLDER — Archive Section
+       (to be built in the next phase)
+  ═══════════════════════════════════════════════════════ -->
+  <section id="archive" aria-label="Archive" style="min-height: 40vh;">
+    <div class="container">
+      <div class="section-label reveal">
+        <span class="rule--accent"></span>
+        <span class="t-subheading">Archive</span>
+      </div>
+      <!-- Content coming soon -->
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCRIPTS — load order matters:
+       1. main.js  (sets up observer, counter, etc.)
+       2. chapters data (populates window.relationshipChapters)
+       3. chapters renderer (reads data, builds DOM)
+  ═══════════════════════════════════════════════════════ -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/data/chapters.js"></script>
+  <script src="assets/js/chapters.js"></script>
+
+</body>
+</html>
