@@ -1,64 +1,127 @@
 /**
  * Our Story — Main JavaScript
- * Handles: Header scroll state, Days Together counter, Intersection Observer reveals
+ * ─────────────────────────────────────────
+ * 01. Cinematic Loader (date reveal → dismiss)
+ * 02. Live Heartbeat Counter (DDD:HH:MM:SS in status bar)
+ * 03. Header scroll state
+ * 04. Smooth anchor nav
+ * 05. Custom cursor
+ * 06. Intersection Observer reveal fallback
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
   // ─────────────────────────────────────────────────────────
-  // 01. DAYS TOGETHER COUNTER
+  // CONFIG
+  // Change this to your actual start date.
+  // Month is 0-indexed: 0 = January, 5 = June, etc.
   // ─────────────────────────────────────────────────────────
-  /**
-   * Set your anniversary start date here (YYYY, MM-1, DD)
-   * Note: Month is 0-indexed in JS (0 = January)
-   */
-  const START_DATE = new Date(2023, 0, 14); // January 14, 2023 — change this!
+  const START_DATE = new Date(2023, 0, 14); // January 14, 2023
 
-  function updateCounter() {
+
+  // ─────────────────────────────────────────────────────────
+  // 01. CINEMATIC LOADER
+  // Shows today's date in the center of a black screen,
+  // then fades out and reveals the current monthsary chapter.
+  // ─────────────────────────────────────────────────────────
+  const loader = document.getElementById('loader');
+  const loaderDateEl = document.getElementById('loader-date');
+
+  // Write today's date in editorial format
+  if (loaderDateEl) {
+    const now = new Date();
+    const months = [
+      'January', 'February', 'March', 'April',
+      'May', 'June', 'July', 'August',
+      'September', 'October', 'November', 'December',
+    ];
+    loaderDateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  }
+
+  /**
+   * Calculate which chapter index corresponds to the current
+   * monthsary (month of relationship). Clamped to available chapters.
+   */
+  function getCurrentMonthsaryIndex() {
+    const now = new Date();
+    const months =
+      (now.getFullYear() - START_DATE.getFullYear()) * 12 +
+      (now.getMonth() - START_DATE.getMonth());
+    const total = window.relationshipChapters
+      ? window.relationshipChapters.length
+      : 1;
+    return Math.min(Math.max(months, 0), total - 1);
+  }
+
+  /**
+   * Dismiss the loader and jump to the current monthsary slide.
+   * Called after the loader's display duration.
+   */
+  function dismissLoader() {
+    if (!loader) return;
+
+    // Expose the target chapter index so motion.js can use it
+    window.targetChapterIndex = getCurrentMonthsaryIndex();
+
+    loader.classList.add('is-hidden');
+
+    // Remove from DOM after CSS transition completes
+    loader.addEventListener('transitionend', () => {
+      loader.style.display = 'none';
+      // Signal motion.js to jump to the right slide
+      if (typeof window.jumpToChapter === 'function') {
+        window.jumpToChapter(window.targetChapterIndex);
+      }
+    }, { once: true });
+  }
+
+  // Show loader for 2.4s then fade out
+  setTimeout(dismissLoader, 2400);
+
+
+  // ─────────────────────────────────────────────────────────
+  // 02. LIVE HEARTBEAT COUNTER — Status Bar
+  // Format: DDD:HH:MM:SS  (e.g. "547:14:23:05")
+  // Ticks every second.
+  // ─────────────────────────────────────────────────────────
+  const timecodeEl = document.getElementById('timecode-display');
+
+  function pad(n, digits = 2) {
+    return String(Math.floor(n)).padStart(digits, '0');
+  }
+
+  function updateTimecode() {
+    if (!timecodeEl) return;
+
     const now = new Date();
     const diffMs = now - START_DATE;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    const counterEl = document.getElementById('days-count');
-    if (!counterEl) return;
-
-    // Animate count up from 0 to actual value
-    animateCount(counterEl, 0, diffDays, 1800);
-  }
-
-  function animateCount(el, start, end, duration) {
-    const startTime = performance.now();
-
-    function step(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(start + (end - start) * eased);
-
-      el.textContent = current.toLocaleString();
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = end.toLocaleString();
-      }
+    if (diffMs < 0) {
+      timecodeEl.textContent = '000:00:00:00';
+      return;
     }
 
-    requestAnimationFrame(step);
+    const totalSecs = Math.floor(diffMs / 1000);
+    const days  = Math.floor(totalSecs / 86400);
+    const hours = Math.floor((totalSecs % 86400) / 3600);
+    const mins  = Math.floor((totalSecs % 3600) / 60);
+    const secs  = totalSecs % 60;
+
+    timecodeEl.textContent = `${pad(days, 3)}:${pad(hours)}:${pad(mins)}:${pad(secs)}`;
   }
 
-  updateCounter();
+  updateTimecode();
+  setInterval(updateTimecode, 1000);
 
 
   // ─────────────────────────────────────────────────────────
-  // 02. HEADER SCROLL BEHAVIOR
-  // Primary driver: Lenis `on('scroll')` in motion.js.
-  // Fallback below only activates when Lenis is unavailable.
+  // 03. HEADER SCROLL STATE
+  // Lenis in motion.js owns scroll; this is the fallback.
   // ─────────────────────────────────────────────────────────
   const header = document.getElementById('site-header');
 
   function applyHeaderScroll(scrollY) {
+    if (!header) return;
     if (scrollY > 80) {
       header.classList.add('is-scrolled');
     } else {
@@ -66,66 +129,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Fallback for no-Lenis environments (Lenis overrides this via its own event)
   window.addEventListener('scroll', () => {
-    // Skip if Lenis is active — it owns scroll state
-    if (window.lenis) return;
+    if (window.lenis) return; // Lenis owns scroll events
     applyHeaderScroll(window.scrollY);
   }, { passive: true });
 
-  // Also expose so motion.js can call during Lenis init if needed
   window.applyHeaderScroll = applyHeaderScroll;
 
 
   // ─────────────────────────────────────────────────────────
-  // 03. INTERSECTION OBSERVER — Section Reveals
-  // ─────────────────────────────────────────────────────────
-  const revealEls = document.querySelectorAll('.reveal');
-
-  if (revealEls.length > 0) {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            // Unobserve after revealing (one-time animation)
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '0px 0px -80px 0px', // trigger slightly before element enters view
-        threshold: 0.1,
-      }
-    );
-
-    revealEls.forEach((el) => revealObserver.observe(el));
-
-    // Expose for chapters.js to re-observe dynamically injected elements
-    window.reinitRevealObserver = function () {
-      document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
-        revealObserver.observe(el);
-      });
-    };
-  }
-
-
-
-  // ─────────────────────────────────────────────────────────
-  // 04. SMOOTH ANCHOR NAV (for internal links)
+  // 04. SMOOTH ANCHOR NAV
   // ─────────────────────────────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       const target = document.querySelector(link.getAttribute('href'));
       if (!target) return;
       e.preventDefault();
-      const offset = parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--header-height')) || 72;
+      const offset = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--header-height')
+      ) || 72;
       const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      // Use Lenis scroll if available, else native smooth
       if (window.lenis) {
-        window.lenis.scrollTo(top, { duration: 1.6 });
+        window.lenis.scrollTo(top, { duration: 1.8 });
       } else {
         window.scrollTo({ top, behavior: 'smooth' });
       }
@@ -134,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ─────────────────────────────────────────────────────────
-  // 05. CURSOR CUSTOM BLEND (subtle luxury touch)
+  // 05. CUSTOM CURSOR
   // ─────────────────────────────────────────────────────────
   const cursor = document.getElementById('custom-cursor');
   if (cursor) {
@@ -154,12 +179,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateCursor();
 
-    // Expand cursor on hoverable elements
-    const hoverables = document.querySelectorAll('a, button, [data-cursor-expand]');
-    hoverables.forEach((el) => {
+    document.querySelectorAll('a, button, [data-cursor-expand]').forEach((el) => {
       el.addEventListener('mouseenter', () => cursor.classList.add('is-expanded'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-expanded'));
     });
+  }
+
+
+  // ─────────────────────────────────────────────────────────
+  // 06. INTERSECTION OBSERVER — CSS reveal fallback
+  // GSAP in motion.js is the primary reveal driver.
+  // This fallback fires for browsers without GSAP / non-chapter elements.
+  // ─────────────────────────────────────────────────────────
+  const revealEls = document.querySelectorAll('.reveal');
+
+  if (revealEls.length > 0) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -80px 0px', threshold: 0.1 }
+    );
+
+    revealEls.forEach((el) => revealObserver.observe(el));
+
+    window.reinitRevealObserver = function () {
+      document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
+        revealObserver.observe(el);
+      });
+    };
   }
 
 });

@@ -19,9 +19,9 @@ const relationshipChapters = [
     monthName: 'January 2023',
     layout: 'editorial-cinematic',
     images: [
-      'https://picsum.photos/seed/chapter1a/1600/900',
-      'https://picsum.photos/seed/chapter1b/800/1000',
-      'https://picsum.photos/seed/chapter1c/700/700',
+      'assets/images/06-14-2026/img_8219.jpg',
+      'assets/images/chapter-1/2.jpg',
+      'assets/images/chapter-1/3.jpg',
     ],
     songUrl: 'assets/audio/chapter-01.mp3',
     description: 'The world was cold and still, and then there was you — a warmth I hadn\'t planned for, arriving quietly like the first light through a curtained window.',

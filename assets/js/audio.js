@@ -24,7 +24,7 @@
     // ─────────────────────────────────────────────────────────
     // CONFIG
     // ─────────────────────────────────────────────────────────
-    const CROSSFADE_DURATION = 0.9;   // seconds
+    const CROSSFADE_DURATION = 2.0;   // seconds — 2s as specified
     const START_VOLUME = 0.55;  // ambient — not loud
     const FADE_INTERVAL_MS = 16;    // ~60fps for gain ramp
 

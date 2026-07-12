@@ -1,13 +1,15 @@
 /**
- * Our Story — Motion Engine
+ * Our Story — Motion Engine (Depo Luxe Edition)
  * ─────────────────────────────────────────────────────────
- * Powers:
- *   01. Lenis  — smooth, heavy, cinematic scroll inertia
- *   02. GSAP   — clip-path & fade reveals tied to ScrollTrigger
- *   03. Film Grain — tiled 24fps canvas overlay (GPU-friendly)
- *
- * Load order in index.html:
- *   Lenis CDN → GSAP CDN → ScrollTrigger CDN → this file
+ * 01. Lenis  — heavy cinematic vertical smooth scroll
+ * 02. GSAP Horizontal Pin — #featured section scrolls chapters
+ *     horizontally while the page scrolls vertically
+ * 03. Clip-path image reveals — fire as each slide enters view
+ * 04. Reveal-up text — words slide up from masked lines
+ * 05. Slide-C parallax — two images at different x speeds
+ * 06. Hero parallax + reveals
+ * 07. Film grain canvas (24fps tiled)
+ * 08. Jump-to-chapter utility (used by loader dismiss)
  * ─────────────────────────────────────────────────────────
  */
 
@@ -15,91 +17,292 @@
   'use strict';
 
   // ─────────────────────────────────────────────────────────
-  // 01. LENIS — Smooth Scroll
+  // 01. LENIS — Vertical Smooth Scroll
   // ─────────────────────────────────────────────────────────
-
   let lenis;
+  let horizontalST = null; // the ScrollTrigger for the horizontal section
 
   function initLenis() {
     if (typeof Lenis === 'undefined') {
-      console.warn('[motion.js] Lenis not loaded. Smooth scroll skipped.');
+      console.warn('[motion.js] Lenis not loaded.');
       return;
     }
 
     lenis = new Lenis({
-      duration: 2.0,   // heavier inertia — feels cinematic
+      duration: 2.6,          // heavy, cinematic inertia
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease
       orientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.75,  // slightly slower wheel sensitivity
-      touchMultiplier: 1.5,
+      wheelMultiplier: 0.8,
+      touchMultiplier: 1.6,
       infinite: false,
     });
 
-    // ── Integrate Lenis into GSAP's ticker (required for ScrollTrigger sync) ──
     if (typeof gsap !== 'undefined') {
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
+      gsap.ticker.add((time) => { lenis.raf(time * 1000); });
       gsap.ticker.lagSmoothing(0);
     } else {
-      // Fallback RAF loop
-      (function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      })(0);
+      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
     }
 
-    // ── Sync ScrollTrigger with Lenis (correct modern pattern) ──
     if (typeof ScrollTrigger !== 'undefined') {
       lenis.on('scroll', ScrollTrigger.update);
     }
 
-    // ── Feed Lenis scroll position into main.js header logic ──
     lenis.on('scroll', ({ scroll }) => {
-      const header = document.getElementById('site-header');
-      if (!header) return;
-      if (scroll > 80) {
-        header.classList.add('is-scrolled');
-      } else {
-        header.classList.remove('is-scrolled');
-      }
+      const h = document.getElementById('site-header');
+      if (!h) return;
+      h.classList.toggle('is-scrolled', scroll > 80);
     });
 
-    // Expose globally (paused by modals, lightboxes, etc.)
     window.lenis = lenis;
   }
 
 
   // ─────────────────────────────────────────────────────────
-  // 02. GSAP REVEALS
+  // 02. GSAP HORIZONTAL PIN
+  // The #featured section is pinned. GSAP translates
+  // #featured-chapters along the X axis as the user scrolls.
   // ─────────────────────────────────────────────────────────
+  let currentActiveIndex = -1;
 
-  function initGSAPReveals() {
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      console.warn('[motion.js] GSAP / ScrollTrigger not loaded. Reveals skipped.');
-      return;
-    }
+  function initHorizontalScroll() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    const section  = document.getElementById('featured');
+    const track    = document.getElementById('featured-chapters');
+    const progress = document.getElementById('progress-bar');
+    if (!section || !track) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // ── Default ScrollTrigger config ──
-    const ST = {
-      start: 'top 88%',
-      toggleActions: 'play none none none',
-    };
+    // Total horizontal distance to travel
+    const getWidth = () => track.scrollWidth - window.innerWidth;
 
-    // ─────────────────────────────────────────────────────
-    // A. HERO — override CSS animations with GSAP
-    // ─────────────────────────────────────────────────────
+    horizontalST = ScrollTrigger.create({
+      trigger: section,
+      pin: true,
+      scrub: 2.4,
+      start: 'top top',
+      end: () => `+=${getWidth()}`,
+      invalidateOnRefresh: true,
+      animation: gsap.to(track, {
+        x: () => -getWidth(),
+        ease: 'none',
+      }),
+      onUpdate: (self) => {
+        // Progress bar
+        if (progress) progress.style.transform = `scaleX(${self.progress})`;
 
-    // Hero eyebrow — clip wipe from left
-    gsap.fromTo('.hero__eyebrow',
-      { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
-      { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, duration: 1.2, delay: 0.3, ease: 'power4.out' }
+        // Audio: find which slide is centered in the viewport
+        detectActiveSlide(self.progress);
+      },
+    });
+
+    // Slide-C inner parallax — foreground moves faster than background
+    document.querySelectorAll('.slide--type-c').forEach((slide) => {
+      const fore = slide.querySelector('.slide__img--fore img');
+      const back = slide.querySelector('.slide__img--back img');
+      if (!fore || !back) return;
+
+      // Both images scrub at different rates inside the horizontal scroll
+      gsap.to(fore, {
+        xPercent: -6,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: slide,
+          containerAnimation: horizontalST?.animation,
+          start: 'left right',
+          end: 'right left',
+          scrub: true,
+        },
+      });
+
+      gsap.to(back, {
+        xPercent: 4,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: slide,
+          containerAnimation: horizontalST?.animation,
+          start: 'left right',
+          end: 'right left',
+          scrub: true,
+        },
+      });
+    });
+
+    ScrollTrigger.refresh();
+  }
+
+  /**
+   * Detect which slide is in the horizontal center of the viewport.
+   * Fires audio crossfade when the active slide changes.
+   */
+  function detectActiveSlide(progress) {
+    const slides = document.querySelectorAll('.chapter[data-index]');
+    const total  = slides.length;
+    if (!total) return;
+
+    // Map progress (0→1) to slide index
+    const idx = Math.min(Math.round(progress * (total - 1)), total - 1);
+    if (idx === currentActiveIndex) return;
+    currentActiveIndex = idx;
+
+    const slide = slides[idx];
+    if (!slide) return;
+
+    const songUrl = slide.getAttribute('data-song');
+    if (songUrl && window.audioEngine) {
+      window.audioEngine.crossfadeTo(songUrl);
+    }
+
+    // Active state class for any CSS-driven effects
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+  }
+
+
+  // ─────────────────────────────────────────────────────────
+  // 03. CLIP-PATH IMAGE REVEALS
+  // Each slide's image wrapper animates from hidden → visible
+  // as the slide enters the pinned viewport.
+  // ─────────────────────────────────────────────────────────
+  function initSlideReveals() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    document.querySelectorAll('.slide').forEach((slide) => {
+      const imgs = slide.querySelectorAll('.slide__img-wrap');
+      const content = slide.querySelector('.slide__content');
+      const numeral = slide.querySelector('.slide__numeral');
+
+      // --- Image clip-path reveals ---
+      imgs.forEach((wrap, i) => {
+        const fromClip = i % 2 === 0
+          ? 'inset(100% 0% 0% 0%)'   // wipe up from bottom
+          : 'inset(0% 0% 100% 0%)';  // wipe down from top
+
+        gsap.fromTo(wrap,
+          { clipPath: fromClip, scale: 1.06 },
+          {
+            clipPath: 'inset(0% 0% 0% 0%)',
+            scale: 1,
+            duration: 1.5,
+            ease: 'power4.out',
+            delay: i * 0.15,
+            scrollTrigger: {
+              trigger: slide,
+              containerAnimation: horizontalST?.animation,
+              start: 'left 90%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+
+      // --- Numeral clip from bottom ---
+      if (numeral) {
+        gsap.fromTo(numeral,
+          { clipPath: 'inset(0% 0% 100% 0%)', y: 30, opacity: 0 },
+          {
+            clipPath: 'inset(0% 0% 0% 0%)',
+            y: 0,
+            opacity: 1,
+            duration: 1.4,
+            ease: 'power4.out',
+            scrollTrigger: {
+              trigger: slide,
+              containerAnimation: horizontalST?.animation,
+              start: 'left 85%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      }
+
+      // --- Content reveal-up ---
+      if (content) {
+        revealUp(content, slide);
+      }
+    });
+  }
+
+  /**
+   * Reveal-up: wraps each word in a masking span so words
+   * slide up from invisible lines (no SplitText plugin needed).
+   */
+  function revealUp(container, triggerEl) {
+    // Split only the description paragraph's words
+    const para = container.querySelector('.slide__description');
+    if (!para) return;
+
+    const raw = para.textContent;
+    const words = raw.trim().split(/\s+/);
+
+    para.innerHTML = words.map((w) =>
+      `<span class="word-mask"><span class="word">${w}</span></span>`
+    ).join(' ');
+
+    const wordEls = para.querySelectorAll('.word');
+
+    gsap.fromTo(wordEls,
+      { y: '100%', opacity: 0 },
+      {
+        y: '0%',
+        opacity: 1,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.025,
+        delay: 0.3,
+        scrollTrigger: {
+          trigger: triggerEl,
+          containerAnimation: horizontalST?.animation,
+          start: 'left 80%',
+          toggleActions: 'play none none none',
+        },
+      }
     );
 
-    // Hero title lines — clip wipe from bottom (each word)
+    // Meta line fade
+    const meta = container.querySelector('.slide__meta');
+    if (meta) {
+      gsap.fromTo(meta,
+        { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          opacity: 1,
+          duration: 1.0,
+          ease: 'power3.out',
+          delay: 0.1,
+          scrollTrigger: {
+            trigger: triggerEl,
+            containerAnimation: horizontalST?.animation,
+            start: 'left 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }
+  }
+
+
+  // ─────────────────────────────────────────────────────────
+  // 04. HERO ANIMATIONS
+  // ─────────────────────────────────────────────────────────
+  function initHeroAnimations() {
+    if (typeof gsap === 'undefined') return;
+
+    // Header entry
+    gsap.fromTo('#site-header',
+      { y: -16, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.0, delay: 0.1, ease: 'power3.out' }
+    );
+
+    // Hero eyebrow wipe
+    gsap.fromTo('.hero__eyebrow',
+      { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
+      { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, duration: 1.2, delay: 0.4, ease: 'power4.out' }
+    );
+
+    // Title lines — clip from bottom
     gsap.utils.toArray('.hero__title-line span').forEach((span, i) => {
       gsap.fromTo(span,
         { clipPath: 'inset(100% 0% 0% 0%)', y: '60%' },
@@ -107,7 +310,7 @@
       );
     });
 
-    // Hero meta — slow fade in
+    // Hero meta fade
     gsap.fromTo('.hero__meta',
       { opacity: 0, y: 18 },
       { opacity: 1, y: 0, duration: 1.4, delay: 1.3, ease: 'power3.out' }
@@ -119,329 +322,137 @@
       { opacity: 1, duration: 1.6, delay: 2.2, ease: 'power2.out' }
     );
 
-    // Header entry
-    gsap.fromTo('#site-header',
-      { y: -12, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: 0.1, ease: 'power3.out' }
-    );
-
-    // ─────────────────────────────────────────────────────
-    // B. SECTION HEADER — "Featured" intro text
-    // ─────────────────────────────────────────────────────
-    document.querySelectorAll('.section-label').forEach((el) => {
-      gsap.fromTo(el,
-        { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
-        {
-          clipPath: 'inset(0% 0% 0% 0%)', opacity: 1,
-          scrollTrigger: { trigger: el, ...ST },
-          duration: 1.1,
-          ease: 'power4.out',
-        }
-      );
-    });
-
-    gsap.utils.toArray('#featured .t-headline').forEach((el) => {
-      gsap.fromTo(el,
-        { y: 36, opacity: 0 },
-        {
-          y: 0, opacity: 1,
-          scrollTrigger: { trigger: el, ...ST },
-          duration: 1.4, ease: 'power3.out',
-        }
-      );
-    });
-
-    // ─────────────────────────────────────────────────────
-    // C. CHAPTER ELEMENTS — called after chapters are in DOM
-    // ─────────────────────────────────────────────────────
-    function revealChapters() {
-      // Guard: chapters must exist
-      const chapterEls = document.querySelectorAll('.chapter');
-      if (!chapterEls.length) return;
-
-      // ── Roman numeral — clip from bottom ──
-      document.querySelectorAll('.chapter__numeral').forEach((el) => {
-        gsap.fromTo(el,
-          { clipPath: 'inset(0% 0% 100% 0%)', y: 50, opacity: 0 },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)', y: 0, opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' },
-            duration: 1.6, ease: 'power4.out',
-          }
-        );
-      });
-
-      // ── Month label + rule — slide in from left ──
-      document.querySelectorAll('.chapter__meta').forEach((el) => {
-        gsap.fromTo(el,
-          { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)', opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' },
-            duration: 1.0, ease: 'power3.out', delay: 0.1,
-          }
-        );
-      });
-
-      // ── Description text — fade + slide ──
-      document.querySelectorAll('.chapter__description').forEach((el) => {
-        gsap.fromTo(el,
-          { y: 28, opacity: 0 },
-          {
-            y: 0, opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
-            duration: 1.3, ease: 'power3.out',
-          }
-        );
-      });
-
-      // ── Song buttons ──
-      document.querySelectorAll('.chapter__song-btn').forEach((el) => {
-        gsap.fromTo(el,
-          { y: 14, opacity: 0 },
-          {
-            y: 0, opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' },
-            duration: 0.9, ease: 'power2.out',
-          }
-        );
-      });
-
-      // ── Image wraps — clip-path wipe, alternating direction ──
-      document.querySelectorAll('.chapter__img-wrap').forEach((el, i) => {
-        const fromClip = i % 2 === 0
-          ? 'inset(0% 0% 100% 0%)' // bottom-up wipe
-          : 'inset(0% 0% 0% 100%)'; // left-to-right wipe
-
-        gsap.fromTo(el,
-          { clipPath: fromClip, scale: 1.06, filter: 'brightness(0.4)' },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)', scale: 1, filter: 'brightness(0.92)',
-            scrollTrigger: {
-              trigger: el, start: 'top 90%', toggleActions: 'play none none none',
-            },
-            duration: 1.7, ease: 'power4.out',
-          }
-        );
-      });
-
-      // ── Cinematic full-bleed image ──
-      document.querySelectorAll('.chapter__cinematic-img').forEach((el) => {
-        gsap.fromTo(el,
-          { clipPath: 'inset(6% 0% 6% 0%)', scale: 1.04, opacity: 0 },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)', scale: 1, opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
-            duration: 1.8, ease: 'power4.out',
-          }
-        );
-      });
-
-      // ── Cinematic aside images ──
-      document.querySelectorAll('.chapter__cinematic-aside').forEach((el) => {
-        gsap.fromTo(el,
-          { y: 48, opacity: 0, scale: 0.96 },
-          {
-            y: 0, opacity: 1, scale: 1,
-            scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' },
-            duration: 1.4, ease: 'power3.out', delay: 0.3,
-          }
-        );
-      });
-
-      // ── Asymmetric hero image ──
-      document.querySelectorAll('.chapter__asym-hero').forEach((el) => {
-        gsap.fromTo(el,
-          { clipPath: 'inset(8% 0% 0% 0%)', opacity: 0 },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)', opacity: 1,
-            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
-            duration: 1.8, ease: 'power4.out',
-          }
-        );
-      });
-
-      // ── Dividers ──
-      document.querySelectorAll('.chapter-divider').forEach((el) => {
-        gsap.fromTo(el.querySelectorAll('.chapter-divider__line'),
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' },
-            duration: 1.2, ease: 'power3.out', stagger: 0.1, transformOrigin: 'left center',
-          }
-        );
-        const glyph = el.querySelector('.chapter-divider__glyph');
-        if (glyph) {
-          gsap.fromTo(glyph,
-            { opacity: 0, scale: 0 },
-            {
-              opacity: 1, scale: 1,
-              scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' },
-              duration: 0.6, ease: 'back.out(2)', delay: 0.4,
-            }
-          );
-        }
+    // Hero image parallax
+    if (typeof ScrollTrigger !== 'undefined') {
+      gsap.to('.hero__bg', {
+        scrollTrigger: {
+          trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.8,
+        },
+        y: '20%', scale: 1.08, ease: 'none',
       });
     }
-
-    // ─────────────────────────────────────────────────────
-    // D. HERO IMAGE PARALLAX
-    // ─────────────────────────────────────────────────────
-    gsap.to('.hero__bg', {
-      scrollTrigger: {
-        trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.8,
-      },
-      y: '20%', scale: 1.1, ease: 'none',
-    });
-
-    // ─────────────────────────────────────────────────────
-    // E. CHAPTER IMAGE PARALLAX — subtle Y drift
-    // ─────────────────────────────────────────────────────
-    document.querySelectorAll('.chapter__cinematic-img img').forEach((img) => {
-      gsap.fromTo(img,
-        { yPercent: -5 },
-        {
-          yPercent: 5, ease: 'none',
-          scrollTrigger: {
-            trigger: img.closest('.chapter__cinematic-img'),
-            start: 'top bottom', end: 'bottom top', scrub: 1.2,
-          },
-        }
-      );
-    });
-
-    document.querySelectorAll('.chapter__asym-hero img').forEach((img) => {
-      gsap.fromTo(img,
-        { yPercent: -4 },
-        {
-          yPercent: 4, ease: 'none',
-          scrollTrigger: {
-            trigger: img.closest('.chapter__asym-hero'),
-            start: 'top bottom', end: 'bottom top', scrub: 1,
-          },
-        }
-      );
-    });
-
-    // ─────────────────────────────────────────────────────
-    // Refresh + run chapter reveals
-    // ─────────────────────────────────────────────────────
-    ScrollTrigger.refresh();
-    revealChapters();
-
-    // Also expose so chapters.js can call after dynamic render
-    window.revealChapters = revealChapters;
   }
 
 
   // ─────────────────────────────────────────────────────────
-  // 03. FILM GRAIN — Tiled 24fps Canvas
-  //
-  // Strategy: draw noise on a tiny 128×128 offscreen canvas,
-  // then tile-blit it to cover the full screen. This replaces
-  // ~8M pixel writes/frame with a single GPU drawImage call.
-  // Capped at 24fps so it feels like actual film grain.
+  // 05. JUMP TO CHAPTER UTILITY
+  // Called by main.js after loader fades — scrolls to the
+  // vertical position that puts the target slide in view.
   // ─────────────────────────────────────────────────────────
+  window.jumpToChapter = function (index) {
+    if (!lenis || !horizontalST) return;
 
+    const slides = document.querySelectorAll('.chapter[data-index]');
+    const total  = slides.length;
+    if (!total || index < 0) return;
+
+    const clampedIdx  = Math.min(index, total - 1);
+    const progress    = clampedIdx / Math.max(total - 1, 1);
+
+    // The GSAP ScrollTrigger maps its scroll range to [start → end]
+    // We need the corresponding native scroll position.
+    const st = horizontalST;
+    if (!st) return;
+
+    const targetScroll = st.start + progress * (st.end - st.start);
+
+    lenis.scrollTo(targetScroll, { immediate: true, duration: 0 });
+  };
+
+
+  // ─────────────────────────────────────────────────────────
+  // 06. FILM GRAIN — 24fps tiled canvas
+  // ─────────────────────────────────────────────────────────
   function initFilmGrain() {
     const canvas = document.getElementById('film-grain-canvas');
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx  = canvas.getContext('2d', { alpha: true });
+    const TILE = 128;
+    const off  = document.createElement('canvas');
+    off.width  = TILE;
+    off.height = TILE;
+    const offCtx = off.getContext('2d');
 
-    // ── Offscreen tile ──
-    const TILE = 128; // tile dimension
-    const offscreen = document.createElement('canvas');
-    offscreen.width = TILE;
-    offscreen.height = TILE;
-    const offCtx = offscreen.getContext('2d');
-
-    // ── Settings ──
-    const TARGET_FPS = 24;
+    const TARGET_FPS    = 24;
     const FRAME_INTERVAL = 1000 / TARGET_FPS;
-    let lastFrameTime = 0;
-    let rafId;
+    let lastFrame = 0, rafId;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
+    function resize() {
+      canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
     }
 
     function drawTile() {
-      const imageData = offCtx.createImageData(TILE, TILE);
-      const data = imageData.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const lum = (Math.random() * 255) | 0;
-        data[i] = lum;
-        data[i + 1] = lum;
-        data[i + 2] = lum;
-        // Very low alpha — grain should be barely-there texture
-        data[i + 3] = (Math.random() * 28 + 4) | 0;
+      const d = offCtx.createImageData(TILE, TILE).data;
+      const img = offCtx.createImageData(TILE, TILE);
+      for (let i = 0; i < img.data.length; i += 4) {
+        const v = (Math.random() * 255) | 0;
+        img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+        img.data[i + 3] = (Math.random() * 28 + 4) | 0;
       }
-      offCtx.putImageData(imageData, 0, 0);
+      offCtx.putImageData(img, 0, 0);
     }
 
-    function drawGrain(timestamp) {
-      rafId = requestAnimationFrame(drawGrain);
-
-      // Throttle to 24fps
-      if (timestamp - lastFrameTime < FRAME_INTERVAL) return;
-      lastFrameTime = timestamp;
-
-      // Draw new tile noise
+    function draw(ts) {
+      rafId = requestAnimationFrame(draw);
+      if (ts - lastFrame < FRAME_INTERVAL) return;
+      lastFrame = ts;
       drawTile();
-
-      // Tile the offscreen canvas across the full viewport
-      const W = canvas.width;
-      const H = canvas.height;
-      const cols = Math.ceil(W / TILE);
-      const rows = Math.ceil(H / TILE);
-
+      const W = canvas.width, H = canvas.height;
+      const cols = Math.ceil(W / TILE), rows = Math.ceil(H / TILE);
       ctx.clearRect(0, 0, W, H);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          ctx.drawImage(offscreen, c * TILE, r * TILE);
-        }
-      }
+      for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+          ctx.drawImage(off, c * TILE, r * TILE);
     }
 
-    resizeCanvas();
-    rafId = requestAnimationFrame(drawGrain);
+    resize();
+    rafId = requestAnimationFrame(draw);
 
-    // Debounced resize
-    let resizeTimer;
+    let t;
     window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(resizeCanvas, 200);
+      clearTimeout(t);
+      t = setTimeout(resize, 200);
     }, { passive: true });
 
-    // Expose control for external pause/resume
     window.filmGrain = {
       pause: () => cancelAnimationFrame(rafId),
-      resume: () => { rafId = requestAnimationFrame(drawGrain); },
+      resume: () => { rafId = requestAnimationFrame(draw); },
     };
   }
 
 
   // ─────────────────────────────────────────────────────────
-  // INIT — wait for DOM ready
+  // INIT SEQUENCE
+  // chapters.js calls window.onChaptersRendered() after
+  // building the DOM, which triggers the GSAP setup.
   // ─────────────────────────────────────────────────────────
 
-  function init() {
-    // 1. Smooth scroll first (must be before GSAP ticker)
-    initLenis();
+  function afterChaptersRendered() {
+    initHorizontalScroll();
 
-    // 2. GSAP reveals — wait two RAF ticks for chapters.js to render
+    // Wait 2 RAF ticks for layout to settle before setting up reveals
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        initGSAPReveals();
+        initSlideReveals();
+        ScrollTrigger.refresh();
       });
     });
+  }
 
-    // 3. Film grain (independent of scroll)
+  function init() {
+    initLenis();
+    initHeroAnimations();
     initFilmGrain();
+
+    // If chapters already rendered (script order), run immediately
+    if (document.querySelector('.chapter')) {
+      afterChaptersRendered();
+    } else {
+      // Otherwise wait for chapters.js signal
+      window.onChaptersRendered = afterChaptersRendered;
+    }
   }
 
   if (document.readyState === 'loading') {
