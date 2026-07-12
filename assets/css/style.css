@@ -11,40 +11,51 @@
    ========================================================= */
 :root {
   /* Colors */
-  --color-void:       #050505;    /* True cinematic black */
-  --color-surface:    #0a0a0a;    /* Slightly elevated surface */
-  --color-border:     rgba(255, 255, 255, 0.06);
-  --color-text:       #f5f0e8;    /* Warm parchment white */
+  --color-void: #050505;
+  /* True cinematic black */
+  --color-surface: #0a0a0a;
+  /* Slightly elevated surface */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-text: #f5f0e8;
+  /* Warm parchment white */
   --color-text-muted: rgba(245, 240, 232, 0.35);
-  --color-text-dim:   rgba(245, 240, 232, 0.15);
-  --color-accent:     #c8a96e;    /* Aged gold */
+  --color-text-dim: rgba(245, 240, 232, 0.15);
+  --color-accent: #c8a96e;
+  /* Aged gold */
   --color-accent-dim: rgba(200, 169, 110, 0.15);
 
   /* Typography */
-  --font-serif:       'Playfair Display', 'Georgia', serif;
-  --font-body:        'Cormorant Garamond', 'Georgia', serif;
-  --font-ui:          'Jost', 'Helvetica Neue', sans-serif;
+  --font-serif: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'Cormorant Garamond', 'Georgia', serif;
+  --font-ui: 'Jost', 'Helvetica Neue', sans-serif;
 
   /* Spacing Scale */
-  --space-xs:   0.5rem;     /* 8px  */
-  --space-sm:   1rem;       /* 16px */
-  --space-md:   2rem;       /* 32px */
-  --space-lg:   4rem;       /* 64px */
-  --space-xl:   8rem;       /* 128px */
-  --space-2xl:  14rem;      /* 224px */
-  --space-3xl:  20rem;      /* 320px */
+  --space-xs: 0.5rem;
+  /* 8px  */
+  --space-sm: 1rem;
+  /* 16px */
+  --space-md: 2rem;
+  /* 32px */
+  --space-lg: 4rem;
+  /* 64px */
+  --space-xl: 8rem;
+  /* 128px */
+  --space-2xl: 14rem;
+  /* 224px */
+  --space-3xl: 20rem;
+  /* 320px */
 
   /* Layout */
   --header-height: 72px;
-  --max-width:     1440px;
+  --max-width: 1440px;
   --content-width: 960px;
 
   /* Motion */
-  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.83, 0, 0.17, 1);
-  --duration-fast:   200ms;
-  --duration-mid:    500ms;
-  --duration-slow:   900ms;
+  --duration-fast: 200ms;
+  --duration-mid: 500ms;
+  --duration-slow: 900ms;
   --duration-reveal: 1400ms;
 }
 
@@ -52,7 +63,9 @@
 /* =========================================================
    02. CSS RESET & BASE
    ========================================================= */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -60,7 +73,7 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; — disabled; Lenis owns scroll inertia */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -78,9 +91,17 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 1px; }
-::-webkit-scrollbar-track { background: var(--color-void); }
-::-webkit-scrollbar-thumb { background: var(--color-border); }
+::-webkit-scrollbar {
+  width: 1px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+}
 
 /* Selection */
 ::selection {
@@ -93,10 +114,11 @@ a {
   color: inherit;
   text-decoration: none;
   transition: color var(--duration-fast) var(--ease-out),
-              opacity var(--duration-fast) var(--ease-out);
+    opacity var(--duration-fast) var(--ease-out);
 }
 
-img, video {
+img,
+video {
   display: block;
   max-width: 100%;
 }
@@ -214,7 +236,7 @@ section {
   /* Starts transparent, gains blur on scroll via JS class */
   background: transparent;
   transition: background var(--duration-mid) var(--ease-out),
-              border-color var(--duration-mid) var(--ease-out);
+    border-color var(--duration-mid) var(--ease-out);
   border-bottom: 1px solid transparent;
 }
 
@@ -313,8 +335,15 @@ section {
 }
 
 @keyframes counterReveal {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
@@ -324,7 +353,8 @@ section {
 #hero {
   position: relative;
   width: 100%;
-  height: 100svh;          /* full viewport height */
+  height: 100svh;
+  /* full viewport height */
   min-height: 640px;
   display: flex;
   flex-direction: column;
@@ -334,7 +364,7 @@ section {
   padding-bottom: clamp(3rem, 8vh, 6rem);
 }
 
-/* Background image layer */
+/* Background image layer — GSAP ScrollTrigger handles Y parallax */
 .hero__bg {
   position: absolute;
   inset: 0;
@@ -343,14 +373,9 @@ section {
   object-fit: cover;
   object-position: center center;
   filter: brightness(0.45) contrast(1.05);
-  /* Subtle Ken Burns drift */
-  animation: heroDrift 28s ease-in-out infinite alternate;
   transform-origin: center center;
-}
-
-@keyframes heroDrift {
-  from { transform: scale(1.04) translateX(-1%); }
-  to   { transform: scale(1.00) translateX(1%);  }
+  /* Pre-promote to compositor layer for jank-free parallax */
+  will-change: transform;
 }
 
 /* Layered vignette gradient */
@@ -359,11 +384,11 @@ section {
   inset: 0;
   background:
     /* bottom-up scrim for text legibility */
-    linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.4) 40%, transparent 70%),
+    linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 40%, transparent 70%),
     /* sides vignette */
-    linear-gradient(to right, rgba(5,5,5,0.3) 0%, transparent 40%, transparent 60%, rgba(5,5,5,0.3) 100%),
+    linear-gradient(to right, rgba(5, 5, 5, 0.3) 0%, transparent 40%, transparent 60%, rgba(5, 5, 5, 0.3) 100%),
     /* top bar for header */
-    linear-gradient(to bottom, rgba(5,5,5,0.6) 0%, transparent 25%);
+    linear-gradient(to bottom, rgba(5, 5, 5, 0.6) 0%, transparent 25%);
   pointer-events: none;
 }
 
@@ -400,32 +425,25 @@ section {
   margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
 }
 
-/* Each word of the title animates in */
+/* Each word of the title animates in — GSAP controls clip-path reveal */
 .hero__title-line {
   display: block;
   overflow: hidden;
 }
 
+/* Initial state — GSAP will animate from translateY(100%) */
 .hero__title-line span {
   display: block;
-  transform: translateY(110%);
-  animation: titleReveal var(--duration-reveal) var(--ease-out) forwards;
+  /* No CSS animation — owned by GSAP in motion.js */
 }
 
-.hero__title-line:nth-child(1) span { animation-delay: 0.4s; }
-.hero__title-line:nth-child(2) span { animation-delay: 0.6s; }
-.hero__title-line:nth-child(3) span { animation-delay: 0.8s; }
-
-@keyframes titleReveal {
-  to { transform: translateY(0); }
-}
-
+/* Hero meta — initial state, GSAP animates in */
 .hero__meta {
   display: flex;
   align-items: center;
   gap: var(--space-md);
   opacity: 0;
-  animation: fadeUp 1s var(--ease-out) 1.4s forwards;
+  /* GSAP sets to 1 */
 }
 
 .hero__meta-divider {
@@ -456,8 +474,17 @@ section {
 }
 
 @keyframes scrollPulse {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50%       { opacity: 1;   transform: scaleY(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scaleY(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1.1);
+  }
 }
 
 
@@ -465,32 +492,71 @@ section {
    07. SHARED ANIMATION UTILITIES
    ========================================================= */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-/* Intersection Observer reveal class */
+/**
+ * .reveal — GSAP-controlled
+ * Initial opacity:0 / translateY set here as a baseline;
+ * GSAP ScrollTrigger animates these to their final state.
+ * The .is-visible class is kept as a CSS fallback for
+ * browsers with JS disabled.
+ */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity var(--duration-slow) var(--ease-out),
-              transform var(--duration-slow) var(--ease-out);
+  will-change: opacity, transform;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
-.reveal--delay-1 { transition-delay: 0.1s; }
-.reveal--delay-2 { transition-delay: 0.25s; }
-.reveal--delay-3 { transition-delay: 0.4s; }
-.reveal--delay-4 { transition-delay: 0.6s; }
+/* Stagger delay helpers (used when GSAP is unavailable / CSS fallback) */
+.reveal--delay-1 {
+  transition-delay: 0.1s;
+}
+
+.reveal--delay-2 {
+  transition-delay: 0.25s;
+}
+
+.reveal--delay-3 {
+  transition-delay: 0.4s;
+}
+
+.reveal--delay-4 {
+  transition-delay: 0.6s;
+}
+
+/* GSAP word-by-word headline split helper */
+.gsap-word-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  margin-right: 0.25em;
+}
+
+.gsap-word {
+  display: inline-block;
+}
 
 
 /* =========================================================
@@ -510,8 +576,37 @@ section {
 
 
 /* =========================================================
-   09. CUSTOM CURSOR
+   09. FILM GRAIN CANVAS
+   Fixed to viewport, drawn by motion.js initFilmGrain()
    ========================================================= */
+#film-grain-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9000;
+  /* above content, below cursor */
+  /* Lowered to 0.65 — tiling is denser than the old full-scan, so less
+     opacity keeps it looking like a subtle texture rather than noise */
+  opacity: 0.65;
+  mix-blend-mode: overlay;
+  /* Promote canvas to its own compositor layer so tile-blits bypass
+     the normal paint pipeline entirely */
+  will-change: contents;
+  transform: translateZ(0);
+}
+
+/* The old per-hero static SVG grain is now redundant — canvas covers all */
+.hero__grain {
+  display: none;
+}
+
+
+/* =========================================================
+   10. CUSTOM CURSOR
+   ========================================================= */
+
 #custom-cursor {
   position: fixed;
   top: 0;
@@ -524,9 +619,9 @@ section {
   pointer-events: none;
   z-index: 9999;
   transition: width var(--duration-fast) var(--ease-out),
-              height var(--duration-fast) var(--ease-out),
-              background var(--duration-fast) var(--ease-out),
-              opacity var(--duration-fast) var(--ease-out);
+    height var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
   mix-blend-mode: difference;
 }
 
@@ -538,13 +633,24 @@ section {
 
 /* Hide custom cursor on touch devices */
 @media (hover: none) {
-  #custom-cursor { display: none; }
-  body { cursor: auto; }
+  #custom-cursor {
+    display: none;
+  }
+
+  body {
+    cursor: auto;
+  }
 }
 
 @media (hover: hover) {
-  body { cursor: none; }
-  a, button { cursor: none; }
+  body {
+    cursor: none;
+  }
+
+  a,
+  button {
+    cursor: none;
+  }
 }
 
 
@@ -563,6 +669,9 @@ section {
   padding-top: clamp(5rem, 12vh, 10rem);
   padding-bottom: clamp(5rem, 12vh, 10rem);
   position: relative;
+  /* Isolate each chapter's paint zone — prevents full-page repaints
+     when GSAP animates opacity/transform inside */
+  contain: layout style paint;
 }
 
 /* ── Chapter Header ── */
@@ -616,8 +725,8 @@ section {
   cursor: pointer;
   color: var(--color-text-muted);
   transition: border-color var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out),
-              background var(--duration-fast) var(--ease-out);
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
 }
 
 .chapter__song-btn:hover {
@@ -655,8 +764,10 @@ section {
   object-fit: cover;
   display: block;
   transition: transform var(--duration-slow) var(--ease-out),
-              filter var(--duration-slow) var(--ease-out);
+    filter var(--duration-slow) var(--ease-out);
   filter: brightness(0.92) contrast(1.02);
+  /* Compositor layer for hover scale + GSAP parallax */
+  will-change: transform;
 }
 
 .chapter__img-wrap:hover img {
@@ -730,7 +841,8 @@ section {
 }
 
 .editorial-left .chapter__img--offset {
-  margin-top: 3rem; /* vertical stagger */
+  margin-top: 3rem;
+  /* vertical stagger */
 }
 
 
@@ -775,7 +887,8 @@ section {
 }
 
 .editorial-right .chapter__img--offset {
-  margin-top: -3rem; /* stagger opposite direction */
+  margin-top: -3rem;
+  /* stagger opposite direction */
 }
 
 
@@ -803,7 +916,7 @@ section {
   object-fit: cover;
   filter: brightness(0.55) contrast(1.05);
   transition: transform var(--duration-slow) var(--ease-out),
-              filter var(--duration-slow) var(--ease-out);
+    filter var(--duration-slow) var(--ease-out);
 }
 
 .editorial-cinematic .chapter__cinematic-img:hover img {
@@ -814,12 +927,10 @@ section {
 .editorial-cinematic .chapter__cinematic-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(5,5,5,0.9) 0%,
-    rgba(5,5,5,0.3) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(to top,
+      rgba(5, 5, 5, 0.9) 0%,
+      rgba(5, 5, 5, 0.3) 50%,
+      transparent 100%);
 }
 
 /* Text floats over the bottom of the image */
@@ -842,7 +953,7 @@ section {
   bottom: -clamp(3rem, 8vh, 6rem);
   width: clamp(160px, 20vw, 280px);
   z-index: 3;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 .editorial-cinematic .chapter__img--aside {
@@ -873,7 +984,8 @@ section {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: clamp(1rem, 2vw, 2rem);
-  align-items: end; /* stagger tops by giving each different height */
+  align-items: end;
+  /* stagger tops by giving each different height */
 }
 
 .editorial-triptych .chapter__img--t1 {
@@ -888,7 +1000,8 @@ section {
 
 .editorial-triptych .chapter__img--t3 {
   height: clamp(280px, 36vw, 500px);
-  margin-top: 4rem; /* pushed down */
+  margin-top: 4rem;
+  /* pushed down */
 }
 
 .editorial-triptych .chapter__triptych-caption {
@@ -1017,8 +1130,14 @@ section {
       "img"
       "text";
   }
-  .editorial-right .chapter__col-primary { grid-area: img; }
-  .editorial-right .chapter__col-secondary { grid-area: text; }
+
+  .editorial-right .chapter__col-primary {
+    grid-area: img;
+  }
+
+  .editorial-right .chapter__col-secondary {
+    grid-area: text;
+  }
 
   .editorial-triptych .chapter__triptych-images {
     grid-template-columns: 1fr 1fr;
@@ -1042,8 +1161,18 @@ section {
     margin-right: -clamp(1.5rem, 5vw, 6rem);
   }
 
-  .editorial-asymmetric .chapter__asym-text { grid-row: 2; grid-column: 1; padding: 2.5rem 0; }
-  .editorial-asymmetric .chapter__asym-small { grid-row: 3; grid-column: 1; margin: 0; height: 220px; }
+  .editorial-asymmetric .chapter__asym-text {
+    grid-row: 2;
+    grid-column: 1;
+    padding: 2.5rem 0;
+  }
+
+  .editorial-asymmetric .chapter__asym-small {
+    grid-row: 3;
+    grid-column: 1;
+    margin: 0;
+    height: 220px;
+  }
 
   .editorial-cinematic .chapter__cinematic-aside {
     position: relative;
@@ -1058,6 +1187,7 @@ section {
   .header__logo {
     font-size: 0.9rem;
   }
+
   .counter__number {
     font-size: 0.9rem;
   }
@@ -1073,4 +1203,3 @@ section {
     margin-top: 0;
   }
 }
-

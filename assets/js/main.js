@@ -53,29 +53,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─────────────────────────────────────────────────────────
   // 02. HEADER SCROLL BEHAVIOR
+  // Primary driver: Lenis `on('scroll')` in motion.js.
+  // Fallback below only activates when Lenis is unavailable.
   // ─────────────────────────────────────────────────────────
   const header = document.getElementById('site-header');
-  let lastScroll = 0;
-  let scrollTimeout;
 
-  function onScroll() {
-    const currentScroll = window.scrollY;
-
-    // Add .is-scrolled class after passing threshold
-    if (currentScroll > 80) {
+  function applyHeaderScroll(scrollY) {
+    if (scrollY > 80) {
       header.classList.add('is-scrolled');
     } else {
       header.classList.remove('is-scrolled');
     }
-
-    lastScroll = currentScroll;
   }
 
+  // Fallback for no-Lenis environments (Lenis overrides this via its own event)
   window.addEventListener('scroll', () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(onScroll, 10);
-    onScroll();
+    // Skip if Lenis is active — it owns scroll state
+    if (window.lenis) return;
+    applyHeaderScroll(window.scrollY);
   }, { passive: true });
+
+  // Also expose so motion.js can call during Lenis init if needed
+  window.applyHeaderScroll = applyHeaderScroll;
 
 
   // ─────────────────────────────────────────────────────────
@@ -124,7 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const offset = parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--header-height')) || 72;
       const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
+      // Use Lenis scroll if available, else native smooth
+      if (window.lenis) {
+        window.lenis.scrollTo(top, { duration: 1.6 });
+      } else {
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
     });
   });
 

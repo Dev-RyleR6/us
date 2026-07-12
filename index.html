@@ -19,9 +19,22 @@
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- ── Motion Libraries (loaded in <head> so they're ready before DOMContentLoaded) ── -->
+  <!-- Lenis — smooth scroll inertia -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.3/dist/lenis.min.js"></script>
+  <!-- GSAP core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- GSAP ScrollTrigger plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 
 <body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FILM GRAIN — canvas overlay, animated by motion.js
+  ═══════════════════════════════════════════════════════ -->
+  <canvas id="film-grain-canvas" aria-hidden="true"></canvas>
 
   <!-- ═══════════════════════════════════════════════════════
        CUSTOM CURSOR (luxury touch — desktop only)
@@ -67,14 +80,19 @@
   ═══════════════════════════════════════════════════════ -->
   <section id="hero" aria-label="Hero">
 
-    <!-- Background photograph -->
+    <!-- Background photograph
+         TODO: Copy your hero image to assets/img/hero.png
+         Generated image is at:
+         C:\Users\63997\.gemini\antigravity\brain\b3e4d573-fdf9-47bb-93a5-199bfa52a624\hero_cinematic_1783836493488.png
+         Placeholder shown until file is copied. -->
     <img
-      src="assets/img/hero.png"
+      src="https://picsum.photos/seed/ourstory-hero/1920/1080"
       alt="A cinematic silhouette of two people in a vast, dimly lit space"
       class="hero__bg"
       loading="eager"
       fetchpriority="high"
     />
+
 
     <!-- Gradient vignette overlay -->
     <div class="hero__vignette" aria-hidden="true"></div>
@@ -160,13 +178,15 @@
 
   <!-- ═══════════════════════════════════════════════════════
        SCRIPTS — load order matters:
-       1. main.js  (sets up observer, counter, etc.)
-       2. chapters data (populates window.relationshipChapters)
-       3. chapters renderer (reads data, builds DOM)
+       1. main.js      — counter, scroll class, cursor
+       2. chapters data — populates window.relationshipChapters
+       3. chapters.js  — renders chapter DOM
+       4. motion.js    — Lenis + GSAP reveals (must be last)
   ═══════════════════════════════════════════════════════ -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/data/chapters.js"></script>
   <script src="assets/js/chapters.js"></script>
+  <script src="assets/js/motion.js"></script>
 
 </body>
 </html>
