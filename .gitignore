@@ -1,0 +1,8 @@
+# Ignore all files in the images folder
+images/*
+
+# Ignore all files in the audio folder
+audio/*
+
+# Ignore all files in the js folder
+js/data/*

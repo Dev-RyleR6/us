@@ -1203,3 +1203,164 @@ section {
     margin-top: 0;
   }
 }
+
+
+/* =========================================================
+   17. SOUND-WAVE VISUALIZER — Fixed Mute Toggle
+   ========================================================= */
+
+/* ── Keyframes for the bouncing bars ── */
+@keyframes soundBar {
+
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* ── Button shell ── */
+#sound-toggle {
+  position: fixed;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  right: clamp(1.5rem, 4vw, 2.5rem);
+  z-index: 9998;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 110, 0.2);
+  background: rgba(5, 5, 5, 0.72);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+
+  position: relative;
+  /* anchor for .sound-toggle__tip */
+  cursor: pointer;
+  padding: 0;
+
+  opacity: 0;
+  animation: fadeIn 0.8s var(--ease-out) 3s forwards;
+
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+#sound-toggle:hover {
+  border-color: rgba(200, 169, 110, 0.55);
+  background: rgba(5, 5, 5, 0.88);
+  box-shadow: 0 0 24px rgba(200, 169, 110, 0.12);
+  transform: scale(1.08);
+}
+
+#sound-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* ── Individual bars ── */
+.sound-bar {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  transform-origin: center bottom;
+  animation: soundBar var(--bar-dur, 0.9s) ease-in-out infinite;
+  animation-delay: var(--bar-delay, 0s);
+  will-change: transform;
+}
+
+.sound-bar--1 {
+  --bar-dur: 0.80s;
+  --bar-delay: 0.00s;
+  height: 12px;
+}
+
+.sound-bar--2 {
+  --bar-dur: 0.65s;
+  --bar-delay: 0.15s;
+  height: 18px;
+}
+
+.sound-bar--3 {
+  --bar-dur: 0.95s;
+  --bar-delay: 0.05s;
+  height: 22px;
+}
+
+.sound-bar--4 {
+  --bar-dur: 0.70s;
+  --bar-delay: 0.22s;
+  height: 16px;
+}
+
+.sound-bar--5 {
+  --bar-dur: 0.85s;
+  --bar-delay: 0.10s;
+  height: 10px;
+}
+
+/* ── Muted — bars drop flat and freeze ── */
+#sound-toggle.is-muted .sound-bar {
+  animation-play-state: paused;
+  transform: scaleY(0.18);
+  opacity: 0.35;
+  transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+
+#sound-toggle:not(.is-muted) .sound-bar {
+  transform: scaleY(1);
+  opacity: 1;
+  transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+
+/* ── Tooltip ── */
+.sound-toggle__tip {
+  position: absolute;
+  right: calc(100% + 12px);
+  bottom: 50%;
+  transform: translateY(50%);
+  white-space: nowrap;
+
+  font-family: var(--font-ui);
+  font-size: 0.52rem;
+  font-weight: 200;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+
+  background: rgba(5, 5, 5, 0.75);
+  backdrop-filter: blur(12px);
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.sound-toggle__tip.is-visible {
+  opacity: 1;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  #sound-toggle {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 42px;
+    height: 42px;
+  }
+}

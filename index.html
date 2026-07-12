@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Our Story — A cinematic editorial chronicle of two lives intertwined. A private archive of moments, memory, and love." />
+  <meta name="description"
+    content="Our Story — A cinematic editorial chronicle of two lives intertwined. A private archive of moments, memory, and love." />
   <meta name="theme-color" content="#050505" />
 
   <!-- Open Graph -->
@@ -85,13 +87,9 @@
          Generated image is at:
          C:\Users\63997\.gemini\antigravity\brain\b3e4d573-fdf9-47bb-93a5-199bfa52a624\hero_cinematic_1783836493488.png
          Placeholder shown until file is copied. -->
-    <img
-      src="https://picsum.photos/seed/ourstory-hero/1920/1080"
-      alt="A cinematic silhouette of two people in a vast, dimly lit space"
-      class="hero__bg"
-      loading="eager"
-      fetchpriority="high"
-    />
+    <img src="https://picsum.photos/seed/ourstory-hero/1920/1080"
+      alt="A cinematic silhouette of two people in a vast, dimly lit space" class="hero__bg" loading="eager"
+      fetchpriority="high" />
 
 
     <!-- Gradient vignette overlay -->
@@ -177,16 +175,34 @@
 
 
   <!-- ═══════════════════════════════════════════════════════
+       SOUND-WAVE VISUALIZER — Mute / Unmute toggle
+       Fixed bottom-right, driven by audio.js
+  ═══════════════════════════════════════════════════════ -->
+  <button id="sound-toggle" aria-label="Toggle ambient audio" aria-pressed="false">
+    <!-- Animated bars -->
+    <span class="sound-bar sound-bar--1" aria-hidden="true"></span>
+    <span class="sound-bar sound-bar--2" aria-hidden="true"></span>
+    <span class="sound-bar sound-bar--3" aria-hidden="true"></span>
+    <span class="sound-bar sound-bar--4" aria-hidden="true"></span>
+    <span class="sound-bar sound-bar--5" aria-hidden="true"></span>
+    <!-- Tooltip label -->
+    <span class="sound-toggle__tip" aria-hidden="true">Ambient audio on</span>
+  </button>
+
+  <!-- ═══════════════════════════════════════════════════════
        SCRIPTS — load order matters:
        1. main.js      — counter, scroll class, cursor
        2. chapters data — populates window.relationshipChapters
        3. chapters.js  — renders chapter DOM
-       4. motion.js    — Lenis + GSAP reveals (must be last)
+       4. motion.js    — Lenis + GSAP reveals
+       5. audio.js     — crossfade engine (chapters must be in DOM)
   ═══════════════════════════════════════════════════════ -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/data/chapters.js"></script>
   <script src="assets/js/chapters.js"></script>
   <script src="assets/js/motion.js"></script>
+  <script src="assets/js/audio.js"></script>
 
 </body>
+
 </html>
