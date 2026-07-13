@@ -294,6 +294,12 @@
     // INIT
     // ─────────────────────────────────────────────────────────
     function init() {
+        // Set initial song to first chapter's song if available
+        const chapters = window.relationshipChapters;
+        if (chapters && chapters.length > 0 && chapters[0].songUrl) {
+            currentUrl = chapters[0].songUrl;
+        }
+
         unlockAudio();
         initChapterObserver();
         buildVisualizerButton();

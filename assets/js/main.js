@@ -38,20 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loaderDateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
   }
 
-  /**
-   * Calculate which chapter index corresponds to the current
-   * monthsary (month of relationship). Clamped to available chapters.
-   */
-  function getCurrentMonthsaryIndex() {
-    const now = new Date();
-    const months =
-      (now.getFullYear() - START_DATE.getFullYear()) * 12 +
-      (now.getMonth() - START_DATE.getMonth());
-    const total = window.relationshipChapters
-      ? window.relationshipChapters.length
-      : 1;
-    return Math.min(Math.max(months, 0), total - 1);
-  }
+
 
   /**
    * Dismiss the loader and jump to the current monthsary slide.
@@ -60,18 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function dismissLoader() {
     if (!loader) return;
 
-    // Expose the target chapter index so motion.js can use it
-    window.targetChapterIndex = getCurrentMonthsaryIndex();
-
     loader.classList.add('is-hidden');
 
     // Remove from DOM after CSS transition completes
     loader.addEventListener('transitionend', () => {
       loader.style.display = 'none';
-      // Signal motion.js to jump to the right slide
-      if (typeof window.jumpToChapter === 'function') {
-        window.jumpToChapter(window.targetChapterIndex);
-      }
     }, { once: true });
   }
 
