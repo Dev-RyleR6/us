@@ -115,26 +115,31 @@
   // ─────────────────────────────────────────────────────────
   function buildSlideC(chapter) {
     const el = createSlideWrapper(chapter, 'type-c');
+    const hasThreeImages = chapter.images.length >= 3;
+    const leftPolaroid = hasThreeImages ? chapter.images[1] : chapter.images[0];
+    const rightPolaroid = hasThreeImages ? chapter.images[2] : (chapter.images[1] || chapter.images[0]);
+    const backgroundImage = hasThreeImages ? chapter.images[0] : null;
+
     el.innerHTML = `
 
-      <!-- Background image -->
-      ${imgWrap(
-        chapter.images[0],
+      <!-- Background image (if available) -->
+      ${backgroundImage ? imgWrap(
+        backgroundImage,
         `${chapter.momentTitle} — background photo`,
         'slide__img--back'
-      )}
+      ) : ''}
 
       <!-- Left polaroid image -->
-      ${chapter.images[0] ? `
+      ${leftPolaroid ? `
         <div class="slide__img-wrap slide__img--fore-left">
-          <img src="${chapter.images[0]}" alt="${chapter.momentTitle} — left photo" loading="lazy" draggable="false">
+          <img src="${leftPolaroid}" alt="${chapter.momentTitle} — left photo" loading="lazy" draggable="false">
         </div>
       ` : ''}
 
       <!-- Right polaroid image -->
-      ${chapter.images[1] ? `
+      ${rightPolaroid ? `
         <div class="slide__img-wrap slide__img--fore">
-          <img src="${chapter.images[1]}" alt="${chapter.momentTitle} — right photo" loading="lazy" draggable="false">
+          <img src="${rightPolaroid}" alt="${chapter.momentTitle} — right photo" loading="lazy" draggable="false">
         </div>
       ` : ''}
 
@@ -181,6 +186,7 @@
   // ─────────────────────────────────────────────────────────
   const layoutToBuilder = {
     'editorial-cinematic': buildSlideC,
+    'slide-c': buildSlideC,
     'editorial-left': buildSlideA,
     'editorial-right': buildSlideD,
     'editorial-triptych': buildSlideA,

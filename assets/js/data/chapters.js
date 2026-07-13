@@ -19,7 +19,7 @@ const relationshipChapters = [
     momentDate: 'June 14, 2026',
     layout: 'editorial-cinematic',
     images: [
-      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/me.jpg',
       'assets/images/06-14-2026/bd2f6f6f-fde8-4faa-b580-de9ceefb03d5.jpg',
     ],
     songUrl: 'assets/audio/chapter-01.mp3',
@@ -32,8 +32,8 @@ const relationshipChapters = [
     momentDate: 'High School Days',
     layout: 'editorial-left',
     images: [
-      'assets/images/highschool/meme-days.jpg', // Replace with a throwback if you have one!
-      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/buddies.jpg', // Replace with a throwback if you have one!
+      'assets/images/06-14-2026/buddies1.jpg',
     ],
     songUrl: '',
     description: 'Who would\'ve thought na kita diay magkadayon lol. Back in high school, meme buddies ra jud ta. You\'ve always been so smart and pretty, but the best part was you actually "know ball" when it comes to high level memes. Di lang ka basta makasabot, kamao pa jud ka mohimo. Never forgot how we used to draw and put text on my printed textbook characters just to plot stupid memes haha.',
