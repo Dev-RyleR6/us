@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Change this to your actual start date.
   // Month is 0-indexed: 0 = January, 5 = June, etc.
   // ─────────────────────────────────────────────────────────
-  const START_DATE = new Date(2023, 0, 14); // January 14, 2023
+  const START_DATE = new Date(2026, 5, 14); // June 14, 2026
 
 
   // ─────────────────────────────────────────────────────────
@@ -85,19 +85,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ticks every second.
   // ─────────────────────────────────────────────────────────
   const timecodeEl = document.getElementById('timecode-display');
+  const heroCountdownEl = document.getElementById('hero-countdown');
 
   function pad(n, digits = 2) {
     return String(Math.floor(n)).padStart(digits, '0');
   }
 
+  function formatHeroCountdown(days, hours, mins, secs) {
+    const parts = [];
+    if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+    if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+    if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+    if (secs > 0 && parts.length === 0) parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+    return parts.join(', ');
+  }
+
   function updateTimecode() {
-    if (!timecodeEl) return;
+    if (!timecodeEl && !heroCountdownEl) return;
 
     const now = new Date();
     const diffMs = now - START_DATE;
 
     if (diffMs < 0) {
-      timecodeEl.textContent = '000:00:00:00';
+      if (timecodeEl) timecodeEl.textContent = '000:00:00:00';
+      if (heroCountdownEl) heroCountdownEl.textContent = '0 days';
       return;
     }
 
@@ -107,7 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const mins  = Math.floor((totalSecs % 3600) / 60);
     const secs  = totalSecs % 60;
 
-    timecodeEl.textContent = `${pad(days, 3)}:${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+    if (timecodeEl) {
+      timecodeEl.textContent = `${pad(days, 3)}:${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+    }
+
+    if (heroCountdownEl) {
+      heroCountdownEl.textContent = formatHeroCountdown(days, hours, mins, secs);
+    }
   }
 
   updateTimecode();

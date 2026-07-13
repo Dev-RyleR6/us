@@ -73,6 +73,16 @@ img,video { display:block; max-width:100%; }
   font-family:var(--font-ui); font-size:10px; font-weight:200;
   letter-spacing:0.22em; text-transform:uppercase; color:var(--color-dim);
 }
+.t-display--hero-countdown {
+  font-family:var(--font-serif);
+  font-size:clamp(1.8rem,3vw,3rem);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:-0.01em;
+  color:var(--color-text);
+  font-style:italic;
+  margin-left: 0.5rem;
+}
 .rule--accent { width:40px; height:1px; background:var(--color-accent); display:block; }
 
 /* ─── LAYOUT ──────────────────────────────────────────── */
@@ -316,7 +326,7 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
 /* Content positioning variants */
 .slide__content { position:absolute; z-index:5; }
 .slide__content--br {
-  bottom:clamp(3.5rem,8vh,6rem);
+  bottom:clamp(8rem,15vh,12rem);
   right:clamp(3rem,5vw,6rem);
   text-align:right;
   max-width:38%;
@@ -324,6 +334,11 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
 .slide__content--br .slide__meta { justify-content:flex-end; }
 .slide__content--right-center {
   right:clamp(2.5rem,5vw,5rem);
+  top:50%; transform:translateY(-50%);
+  max-width:30%;
+}
+.slide__content--left-center {
+  left:clamp(2.5rem,5vw,5rem);
   top:50%; transform:translateY(-50%);
   max-width:30%;
 }
@@ -359,7 +374,7 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   border-right:1px solid var(--color-border);
 }
 .slide--type-a .slide__img--secondary {
-  bottom:clamp(4rem,9vh,7rem);
+  bottom:clamp(9rem,16vh,13rem);
   left:clamp(2.5rem,5vw,5rem);
   width:26%; height:38%;
   border:1px solid var(--color-border);
@@ -380,19 +395,58 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   z-index:1;
 }
 
+/* ─── SLIDE TYPE D ────────────────────────────────────── */
+/* Large image center-right, floating numeral far-left */
+.slide--type-d .slide__img--hero-right {
+  top:0; right:0;
+  width:62%; height:100%;
+}
+.slide--type-d .slide__numeral--ghost-left {
+  position:absolute;
+  left:1%;
+  top:50%; transform:translateY(-50%);
+  font-size:clamp(10rem,18vw,22rem);
+  color:rgba(240,236,228,0.04);
+  z-index:1;
+}
+.slide--type-d .slide__divider-v-left {
+  position:absolute;
+  top:10%; bottom:10%;
+  left:62%;
+  width:1px;
+  background:var(--color-border);
+}
+
 /* ─── SLIDE TYPE C ────────────────────────────────────── */
 /* Two overlapping images + centered text */
 .slide--type-c .slide__img--back {
-  top:0; right:0;
-  width:60%; height:85%;
+  top:0; left:0;
+  width:100%; height:100%;
   z-index:1;
 }
 .slide--type-c .slide__img--fore {
-  bottom:clamp(2rem,5vh,4rem);
-  left:clamp(2.5rem,5vw,5rem);
-  width:46%; height:72%;
-  z-index:2;
-  border:1px solid var(--color-border);
+  display: block;
+  position: absolute;
+  bottom: clamp(12rem, 25vh, 20rem);
+  right: clamp(2rem, 5vw, 6rem);
+  width: clamp(200px, 25vw, 350px);
+  height: auto;
+  z-index: 3;
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: rotate(2deg);
+}
+.slide--type-c .slide__img--fore-left {
+  display: block;
+  position: absolute;
+  bottom: clamp(14rem, 28vh, 22rem);
+  left: clamp(2rem, 5vw, 6rem);
+  width: clamp(200px, 25vw, 350px);
+  height: auto;
+  z-index: 3;
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: rotate(-3deg);
 }
 .slide--type-c .slide__numeral--center {
   display:block;
@@ -402,12 +456,23 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   text-align:center;
 }
 .slide--type-c .slide__content--center {
+  top:auto;
+  bottom:clamp(2rem,6vh,4rem);
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  max-width:600px;
   background:rgba(0,0,0,0.55);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
   border:1px solid var(--color-border);
   padding:2.5rem 3rem;
   z-index:10;
+}
+.slide--type-c .slide__description {
+  max-width:none;
+  color:rgba(240,236,228,0.9);
+  font-size:clamp(1rem,1.4vw,1.3rem);
 }
 
 /* ─── FILM GRAIN CANVAS ───────────────────────────────── */

@@ -25,7 +25,7 @@
     article.className = `chapter slide slide--${type}`;
     article.setAttribute('data-chapter', chapter.chapterNumber);
     article.setAttribute('data-song', chapter.songUrl || '');
-    article.setAttribute('aria-label', `Chapter ${chapter.chapterNumber}: ${chapter.monthName}`);
+    article.setAttribute('aria-label', `Chapter ${chapter.chapterNumber}: ${chapter.momentTitle}`);
     return article;
   }
 
@@ -37,12 +37,12 @@
       </div>`;
   }
 
-  /** Tiny metadata line — rule + month name */
+  /** Tiny metadata line — rule + moment date */
   function metaLine(chapter) {
     return `
       <div class="slide__meta">
         <span class="slide__rule"></span>
-        <span class="slide__month">${chapter.monthName}</span>
+        <span class="slide__month">${chapter.momentDate}</span>
       </div>`;
   }
 
@@ -64,10 +64,10 @@
       <span class="slide__numeral" aria-hidden="true">${chapter.chapterNumber}</span>
 
       <!-- Primary image — top-left -->
-      ${imgWrap(chapter.images[0], `${chapter.monthName} — primary photo`, 'slide__img--primary')}
+      ${imgWrap(chapter.images[0], `${chapter.momentTitle} — primary photo`, 'slide__img--primary')}
 
       <!-- Second image — offset lower left -->
-      ${chapter.images[1] ? imgWrap(chapter.images[1], `${chapter.monthName} — second photo`, 'slide__img--secondary') : ''}
+      ${chapter.images[1] ? imgWrap(chapter.images[1], `${chapter.momentTitle} — second photo`, 'slide__img--secondary') : ''}
 
       <!-- Text — bottom-right -->
       <div class="slide__content slide__content--br">
@@ -91,7 +91,7 @@
     el.innerHTML = `
 
       <!-- Large primary image — center-left column -->
-      ${imgWrap(chapter.images[0], `${chapter.monthName} — primary photo`, 'slide__img--hero')}
+      ${imgWrap(chapter.images[0], `${chapter.momentTitle} — primary photo`, 'slide__img--hero')}
 
       <!-- Ghost Roman numeral — far right -->
       <span class="slide__numeral slide__numeral--ghost" aria-hidden="true">${chapter.chapterNumber}</span>
@@ -117,19 +117,26 @@
     const el = createSlideWrapper(chapter, 'type-c');
     el.innerHTML = `
 
-      <!-- Background image (right-heavy, moves slower) -->
+      <!-- Background image -->
       ${imgWrap(
         chapter.images[0],
-        `${chapter.monthName} — background photo`,
+        `${chapter.momentTitle} — background photo`,
         'slide__img--back'
       )}
 
-      <!-- Foreground image (left-heavy, moves faster) -->
-      ${imgWrap(
-        chapter.images[1] || chapter.images[0],
-        `${chapter.monthName} — foreground photo`,
-        'slide__img--fore'
-      )}
+      <!-- Left polaroid image -->
+      ${chapter.images[0] ? `
+        <div class="slide__img-wrap slide__img--fore-left">
+          <img src="${chapter.images[0]}" alt="${chapter.momentTitle} — left photo" loading="lazy" draggable="false">
+        </div>
+      ` : ''}
+
+      <!-- Right polaroid image -->
+      ${chapter.images[1] ? `
+        <div class="slide__img-wrap slide__img--fore">
+          <img src="${chapter.images[1]}" alt="${chapter.momentTitle} — right photo" loading="lazy" draggable="false">
+        </div>
+      ` : ''}
 
       <!-- Centered text overlay -->
       <div class="slide__content slide__content--center">
@@ -143,9 +150,43 @@
 
 
   // ─────────────────────────────────────────────────────────
+  // SLIDE TYPE D
+  // Content left, large image right
+  // ─────────────────────────────────────────────────────────
+  function buildSlideD(chapter) {
+    const el = createSlideWrapper(chapter, 'type-d');
+    el.innerHTML = `
+
+      <!-- Large primary image — center-right column -->
+      ${imgWrap(chapter.images[0], `${chapter.momentTitle} — primary photo`, 'slide__img--hero-right')}
+
+      <!-- Ghost Roman numeral — far left -->
+      <span class="slide__numeral slide__numeral--ghost-left" aria-hidden="true">${chapter.chapterNumber}</span>
+
+      <!-- Text — centered in left column -->
+      <div class="slide__content slide__content--left-center">
+        ${metaLine(chapter)}
+        ${descPara(chapter)}
+      </div>
+
+      <!-- Thin vertical divider line -->
+      <div class="slide__divider-v-left" aria-hidden="true"></div>
+    `;
+    return el;
+  }
+
+
+  // ─────────────────────────────────────────────────────────
   // DISPATCHER
   // ─────────────────────────────────────────────────────────
-  const builders = [buildSlideA, buildSlideB, buildSlideC];
+  const layoutToBuilder = {
+    'editorial-cinematic': buildSlideC,
+    'editorial-left': buildSlideA,
+    'editorial-right': buildSlideD,
+    'editorial-triptych': buildSlideA,
+    'editorial-asymmetric': buildSlideB
+  };
+  const fallbackBuilders = [buildSlideA, buildSlideB, buildSlideC];
 
 
   // ─────────────────────────────────────────────────────────
@@ -165,7 +206,7 @@
     const frag = document.createDocumentFragment();
 
     window.relationshipChapters.forEach((chapter, i) => {
-      const builder = builders[i % 3];
+      const builder = layoutToBuilder[chapter.layout] || fallbackBuilders[i % 3];
       const el = builder(chapter);
       el.setAttribute('data-index', i);
       frag.appendChild(el);

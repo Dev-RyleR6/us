@@ -12,162 +12,83 @@
  *   'editorial-triptych'   — Three staggered images, text beneath
  *   'editorial-asymmetric' — Large hero + offset small + floating text
  */
-
 const relationshipChapters = [
   {
     chapterNumber: 'I',
-    monthName: 'January 2023',
+    momentTitle: 'Officially Us',
+    momentDate: 'June 14, 2026',
     layout: 'editorial-cinematic',
     images: [
-      'assets/images/06-14-2026/img_8219.jpg',
-      'assets/images/chapter-1/2.jpg',
-      'assets/images/chapter-1/3.jpg',
+      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/bd2f6f6f-fde8-4faa-b580-de9ceefb03d5.jpg',
     ],
     songUrl: 'assets/audio/chapter-01.mp3',
-    description: 'The world was cold and still, and then there was you — a warmth I hadn\'t planned for, arriving quietly like the first light through a curtained window.',
+    description: 'Finally I can legally call u mine haha. From just "nhiks" to "lovee" or pwede rpd "tralala", every name feels like a little piece of my heart saying your name.',
   },
 
   {
     chapterNumber: 'II',
-    monthName: 'February 2023',
+    momentTitle: 'The Smartest Meme Buddy',
+    momentDate: 'High School Days',
     layout: 'editorial-left',
     images: [
-      'https://picsum.photos/seed/chapter2a/900/1200',
-      'https://picsum.photos/seed/chapter2b/600/600',
-      'https://picsum.photos/seed/chapter2c/600/400',
+      'assets/images/highschool/meme-days.jpg', // Replace with a throwback if you have one!
+      'assets/images/06-14-2026/IMG_8219.jpg',
     ],
-    songUrl: 'assets/audio/chapter-02.mp3',
-    description: 'Every February after will carry the ghost of this one. The coffee. The silence. The way you looked at me like I was already home.',
+    songUrl: '',
+    description: 'Who would\'ve thought na kita diay magkadayon lol. Back in high school, meme buddies ra jud ta. You\'ve always been so smart and pretty, but the best part was you actually "know ball" when it comes to high level memes. Di lang ka basta makasabot, kamao pa jud ka mohimo. Never forgot how we used to draw and put text on my printed textbook characters just to plot stupid memes haha.',
   },
 
   {
     chapterNumber: 'III',
-    monthName: 'March 2023',
+    momentTitle: 'From Brainrot to Sunsets',
+    momentDate: 'The Keeping-In-Touch Era',
     layout: 'editorial-right',
     images: [
-      'https://picsum.photos/seed/chapter3a/900/1200',
-      'https://picsum.photos/seed/chapter3b/700/500',
-      'https://picsum.photos/seed/chapter3c/700/500',
+      'assets/images/reels/random-spam.jpg', 
+      'assets/images/06-14-2026/IMG_8219.jpg',
     ],
-    songUrl: 'assets/audio/chapter-03.mp3',
-    description: 'Things that began in March: our first real argument. Our first real apology. The understanding that staying is its own kind of bravery.',
+    songUrl: '',
+    description: 'Even when life got busy, sige gihapon tag chat. Our inbox is literally just a beautiful mess—spamming reels from the most unhinged/racist memes to random sunsets and pets. Halos tanan nalang jud i-send natos usa\'t isa. Plus keeping up our TikTok streaks everyday, automatic na jud na sa routine.',
   },
 
   {
     chapterNumber: 'IV',
-    monthName: 'April 2023',
+    momentTitle: 'We Ruined the Friendship... In the Best Way',
+    momentDate: 'June 2026',
     layout: 'editorial-triptych',
     images: [
-      'https://picsum.photos/seed/chapter4a/700/900',
-      'https://picsum.photos/seed/chapter4b/700/1100',
-      'https://picsum.photos/seed/chapter4c/700/800',
+      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/IMG_8219.jpg',
     ],
-    songUrl: 'assets/audio/chapter-04.mp3',
-    description: 'Fourteen frames in a camera roll. Forty laughs in an afternoon. One feeling I couldn\'t name yet, though I knew it was something I\'d carry for a long time.',
+    songUrl: '',
+    description: 'They say "don\'t risk the friendship" pero deadma, gubaon gihapon ang friendship kay ganahan man ko nimo haha. Honestly the best decision ever. From just bantering and kantsaway all the time, and now uyab na ta. You\'re still my best friend, tralala, but this time ako na gapangga nimo.',
   },
 
   {
     chapterNumber: 'V',
-    monthName: 'May 2023',
+    momentTitle: 'Studying Apart, Growing Together',
+    momentDate: 'Every Day We\'re Apart',
     layout: 'editorial-asymmetric',
     images: [
-      'https://picsum.photos/seed/chapter5a/1200/800',
-      'https://picsum.photos/seed/chapter5b/500/700',
-      'https://picsum.photos/seed/chapter5c/600/400',
+      'assets/images/ldr/facetime.jpg', 
+      'assets/images/06-14-2026/IMG_8219.jpg',
     ],
-    songUrl: 'assets/audio/chapter-05.mp3',
-    description: 'We drove without a destination. You played songs I hadn\'t heard. I memorized your profile against the window — golden hour, golden hour, golden hour.',
+    songUrl: '',
+    description: 'It honestly sucks that we don\'t get to meet physically as often as we want because of our studies. LDR is heavy sometimes, but we always pull through via FaceTime dates. Worth it ra gihapon everything because I know you\'re working hard on your end too. Distance can\'t change how much I\'m into you, lovee.',
   },
 
   {
     chapterNumber: 'VI',
-    monthName: 'June 2023',
-    layout: 'editorial-left',
+    momentTitle: 'Written in the Stars (Literally)',
+    momentDate: 'Our 1st Monthsary',
+    layout: 'slide-c',
     images: [
-      'https://picsum.photos/seed/chapter6a/900/1300',
-      'https://picsum.photos/seed/chapter6b/600/500',
-      'https://picsum.photos/seed/chapter6c/600/450',
+      'assets/images/06-14-2026/nhiki.jpg', 
+      'assets/images/06-14-2026/ryle.jpg',
     ],
-    songUrl: 'assets/audio/chapter-06.mp3',
-    description: 'The city felt borrowed. Like we were visitors from some quieter future, moving through it in slow motion, tasting everything twice.',
-  },
-
-  {
-    chapterNumber: 'VII',
-    monthName: 'July 2023',
-    layout: 'editorial-cinematic',
-    images: [
-      'https://picsum.photos/seed/chapter7a/1600/900',
-      'https://picsum.photos/seed/chapter7b/700/900',
-      'https://picsum.photos/seed/chapter7c/600/600',
-    ],
-    songUrl: 'assets/audio/chapter-07.mp3',
-    description: 'Heat like a held breath. Nights that refused to end. I think this was when I stopped wondering about you and started simply knowing.',
-  },
-
-  {
-    chapterNumber: 'VIII',
-    monthName: 'August 2023',
-    layout: 'editorial-triptych',
-    images: [
-      'https://picsum.photos/seed/chapter8a/600/900',
-      'https://picsum.photos/seed/chapter8b/600/700',
-      'https://picsum.photos/seed/chapter8c/600/950',
-    ],
-    songUrl: 'assets/audio/chapter-08.mp3',
-    description: 'We were soft with each other this month. Careful and deliberate. The way you handle something you\'ve decided to keep.',
-  },
-
-  {
-    chapterNumber: 'IX',
-    monthName: 'September 2023',
-    layout: 'editorial-right',
-    images: [
-      'https://picsum.photos/seed/chapter9a/850/1200',
-      'https://picsum.photos/seed/chapter9b/650/500',
-      'https://picsum.photos/seed/chapter9c/650/450',
-    ],
-    songUrl: 'assets/audio/chapter-09.mp3',
-    description: 'Autumn came and made everything look like a painting we hadn\'t finished. We decided to stay inside it anyway — unfinished, unfazed.',
-  },
-
-  {
-    chapterNumber: 'X',
-    monthName: 'October 2023',
-    layout: 'editorial-asymmetric',
-    images: [
-      'https://picsum.photos/seed/chapter10a/1100/750',
-      'https://picsum.photos/seed/chapter10b/500/650',
-      'https://picsum.photos/seed/chapter10c/550/380',
-    ],
-    songUrl: 'assets/audio/chapter-10.mp3',
-    description: 'This is the month I knew. Not suspected, not hoped — knew. The way you know a place is yours before you\'ve unpacked.',
-  },
-
-  {
-    chapterNumber: 'XI',
-    monthName: 'November 2023',
-    layout: 'editorial-left',
-    images: [
-      'https://picsum.photos/seed/chapter11a/900/1250',
-      'https://picsum.photos/seed/chapter11b/580/520',
-      'https://picsum.photos/seed/chapter11c/580/420',
-    ],
-    songUrl: 'assets/audio/chapter-11.mp3',
-    description: 'We cooked the same meal three times. Watched the same film twice. I would do all of it again — infinitely, gratefully, without hesitation.',
-  },
-
-  {
-    chapterNumber: 'XII',
-    monthName: 'December 2023',
-    layout: 'editorial-cinematic',
-    images: [
-      'https://picsum.photos/seed/chapter12a/1600/900',
-      'https://picsum.photos/seed/chapter12b/700/900',
-      'https://picsum.photos/seed/chapter12c/700/600',
-    ],
-    songUrl: 'assets/audio/chapter-12.mp3',
-    description: 'One year. One long, luminous sentence written by two people who hadn\'t planned to meet — and now cannot imagine having missed each other.',
+    songUrl: '',
+    description: 'Since layo ta ari sa earth, I found a way para maapil gihapon ta sa space haha. I submitted our names to NASA, so it\'s officially loaded onto the Nancy Grace Roman Space Telescope heading 1 million miles into deep space. Impas gyud ang space telescope kay apil atong "tralala" sa universe haha. Happy 1st monthsary, lovee! To more months with you.',
   },
 ];
 

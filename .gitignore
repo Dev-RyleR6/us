@@ -2,7 +2,7 @@
 images/*
 
 # Ignore all files in the audio folder
-audio/*
+assets/audio/*
 
 # Ignore all files in the js folder
 js/data/*
