@@ -21,6 +21,18 @@
   // ─────────────────────────────────────────────────────────
   let lenis;
   let horizontalST = null; // the ScrollTrigger for the horizontal section
+  let verticalIO = null;   // IntersectionObserver for mobile vertical layout
+  let slideTriggers = [];  // track slide-related ScrollTriggers for teardown
+
+  const MOBILE_MQ = window.matchMedia('(max-width: 768px)');
+
+  function isMobileLayout() {
+    return MOBILE_MQ.matches;
+  }
+
+  function setLayoutMode() {
+    document.body.classList.toggle('is-mobile-layout', isMobileLayout());
+  }
 
   function initLenis() {
     if (typeof Lenis === 'undefined') {
@@ -29,12 +41,12 @@
     }
 
     lenis = new Lenis({
-      duration: 2.6,          // heavy, cinematic inertia
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease
+      duration: isMobileLayout() ? 1.4 : 2.6,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 0.8,
-      touchMultiplier: 1.6,
+      touchMultiplier: isMobileLayout() ? 2.2 : 1.6,
       infinite: false,
     });
 
@@ -60,7 +72,68 @@
 
 
   // ─────────────────────────────────────────────────────────
-  // 02. GSAP HORIZONTAL PIN
+  // 02a. MOBILE VERTICAL CHAPTERS
+  // On phones, chapters stack vertically with standard scroll.
+  // ─────────────────────────────────────────────────────────
+  function initVerticalChapters() {
+    const slides = document.querySelectorAll('.chapter[data-index]');
+    if (!slides.length) return;
+
+    if (verticalIO) verticalIO.disconnect();
+
+    verticalIO = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.45) return;
+
+          const slide = entry.target;
+          const idx = parseInt(slide.getAttribute('data-index'), 10);
+          if (idx === currentActiveIndex) return;
+          currentActiveIndex = idx;
+
+          const songUrl = slide.getAttribute('data-song');
+          if (songUrl && window.audioEngine) {
+            window.audioEngine.crossfadeTo(songUrl);
+          }
+
+          slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+        });
+      },
+      { threshold: [0.45, 0.6] }
+    );
+
+    slides.forEach((slide) => verticalIO.observe(slide));
+  }
+
+
+  // ─────────────────────────────────────────────────────────
+  // 02b. TEARDOWN — reset featured motion on breakpoint change
+  // ─────────────────────────────────────────────────────────
+  function teardownFeaturedMotion() {
+    if (horizontalST) {
+      horizontalST.kill();
+      horizontalST = null;
+    }
+
+    if (verticalIO) {
+      verticalIO.disconnect();
+      verticalIO = null;
+    }
+
+    slideTriggers.forEach((st) => st.kill());
+    slideTriggers = [];
+    currentActiveIndex = -1;
+
+    const track = document.getElementById('featured-chapters');
+    if (track) gsap.set(track, { x: 0, clearProps: 'transform' });
+
+    const progress = document.getElementById('progress-bar');
+    if (progress) progress.style.transform = 'scaleX(0)';
+  }
+
+
+  // ─────────────────────────────────────────────────────────
+  // 02c. GSAP HORIZONTAL PIN (tablet + desktop)
   // The #featured section is pinned. GSAP translates
   // #featured-chapters along the X axis as the user scrolls.
   // ─────────────────────────────────────────────────────────
@@ -68,6 +141,10 @@
 
   function initHorizontalScroll() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    if (isMobileLayout()) {
+      initVerticalChapters();
+      return;
+    }
 
     const section  = document.getElementById('featured');
     const track    = document.getElementById('featured-chapters');
@@ -76,7 +153,6 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Total horizontal distance to travel
     const getWidth = () => track.scrollWidth - window.innerWidth;
 
     horizontalST = ScrollTrigger.create({
@@ -91,22 +167,19 @@
         ease: 'none',
       }),
       onUpdate: (self) => {
-        // Progress bar
         if (progress) progress.style.transform = `scaleX(${self.progress})`;
-
-        // Audio: find which slide is centered in the viewport
         detectActiveSlide(self.progress);
       },
     });
 
-    // Slide-C inner parallax — foreground moves faster than background
+    slideTriggers.push(horizontalST);
+
     document.querySelectorAll('.slide--type-c').forEach((slide) => {
       const fore = slide.querySelector('.slide__img--fore img');
       const back = slide.querySelector('.slide__img--back img');
       if (!fore || !back) return;
 
-      // Both images scrub at different rates inside the horizontal scroll
-      gsap.to(fore, {
+      const foreST = gsap.to(fore, {
         xPercent: -6,
         ease: 'none',
         scrollTrigger: {
@@ -118,7 +191,7 @@
         },
       });
 
-      gsap.to(back, {
+      const backST = gsap.to(back, {
         xPercent: 4,
         ease: 'none',
         scrollTrigger: {
@@ -129,6 +202,9 @@
           scrub: true,
         },
       });
+
+      if (foreST.scrollTrigger) slideTriggers.push(foreST.scrollTrigger);
+      if (backST.scrollTrigger) slideTriggers.push(backST.scrollTrigger);
     });
 
     ScrollTrigger.refresh();
@@ -169,18 +245,40 @@
   function initSlideReveals() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
+    const horizontal = !isMobileLayout();
+
     document.querySelectorAll('.slide').forEach((slide) => {
       const imgs = slide.querySelectorAll('.slide__img-wrap');
       const content = slide.querySelector('.slide__content');
       const numeral = slide.querySelector('.slide__numeral');
 
-      // --- Image clip-path reveals ---
+      const triggerBase = horizontal
+        ? {
+            trigger: slide,
+            containerAnimation: horizontalST?.animation,
+            start: 'left 90%',
+            toggleActions: 'play none none none',
+          }
+        : {
+            trigger: slide,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          };
+
+      const numeralTrigger = horizontal
+        ? { ...triggerBase, start: 'left 85%' }
+        : { ...triggerBase, start: 'top 78%' };
+
+      const contentTrigger = horizontal
+        ? { trigger: slide, containerAnimation: horizontalST?.animation, start: 'left 80%', toggleActions: 'play none none none' }
+        : { trigger: slide, start: 'top 75%', toggleActions: 'play none none none' };
+
       imgs.forEach((wrap, i) => {
         const fromClip = i % 2 === 0
-          ? 'inset(100% 0% 0% 0%)'   // wipe up from bottom
-          : 'inset(0% 0% 100% 0%)';  // wipe down from top
+          ? 'inset(100% 0% 0% 0%)'
+          : 'inset(0% 0% 100% 0%)';
 
-        gsap.fromTo(wrap,
+        const tween = gsap.fromTo(wrap,
           { clipPath: fromClip, scale: 1.06 },
           {
             clipPath: 'inset(0% 0% 0% 0%)',
@@ -188,19 +286,14 @@
             duration: 1.5,
             ease: 'power4.out',
             delay: i * 0.15,
-            scrollTrigger: {
-              trigger: slide,
-              containerAnimation: horizontalST?.animation,
-              start: 'left 90%',
-              toggleActions: 'play none none none',
-            },
+            scrollTrigger: triggerBase,
           }
         );
+        if (tween.scrollTrigger) slideTriggers.push(tween.scrollTrigger);
       });
 
-      // --- Numeral clip from bottom ---
       if (numeral) {
-        gsap.fromTo(numeral,
+        const tween = gsap.fromTo(numeral,
           { clipPath: 'inset(0% 0% 100% 0%)', y: 30, opacity: 0 },
           {
             clipPath: 'inset(0% 0% 0% 0%)',
@@ -208,19 +301,14 @@
             opacity: 1,
             duration: 1.4,
             ease: 'power4.out',
-            scrollTrigger: {
-              trigger: slide,
-              containerAnimation: horizontalST?.animation,
-              start: 'left 85%',
-              toggleActions: 'play none none none',
-            },
+            scrollTrigger: numeralTrigger,
           }
         );
+        if (tween.scrollTrigger) slideTriggers.push(tween.scrollTrigger);
       }
 
-      // --- Content reveal-up ---
       if (content) {
-        revealUp(content, slide);
+        revealUp(content, slide, contentTrigger);
       }
     });
   }
@@ -229,21 +317,22 @@
    * Reveal-up: wraps each word in a masking span so words
    * slide up from invisible lines (no SplitText plugin needed).
    */
-  function revealUp(container, triggerEl) {
-    // Split only the description paragraph's words
+  function revealUp(container, triggerEl, scrollTriggerConfig) {
     const para = container.querySelector('.slide__description');
     if (!para) return;
 
-    const raw = para.textContent;
-    const words = raw.trim().split(/\s+/);
+    if (!para.querySelector('.word-mask')) {
+      const raw = para.textContent;
+      const words = raw.trim().split(/\s+/);
 
-    para.innerHTML = words.map((w) =>
-      `<span class="word-mask"><span class="word">${w}</span></span>`
-    ).join(' ');
+      para.innerHTML = words.map((w) =>
+        `<span class="word-mask"><span class="word">${w}</span></span>`
+      ).join(' ');
+    }
 
     const wordEls = para.querySelectorAll('.word');
 
-    gsap.fromTo(wordEls,
+    const wordTween = gsap.fromTo(wordEls,
       { y: '100%', opacity: 0 },
       {
         y: '0%',
@@ -252,19 +341,19 @@
         ease: 'power3.out',
         stagger: 0.025,
         delay: 0.3,
-        scrollTrigger: {
-          trigger: triggerEl,
-          containerAnimation: horizontalST?.animation,
-          start: 'left 80%',
-          toggleActions: 'play none none none',
-        },
+        scrollTrigger: scrollTriggerConfig,
       }
     );
+    if (wordTween.scrollTrigger) slideTriggers.push(wordTween.scrollTrigger);
 
-    // Meta line fade
     const meta = container.querySelector('.slide__meta');
     if (meta) {
-      gsap.fromTo(meta,
+      const metaConfig = { ...scrollTriggerConfig };
+      if (metaConfig.start && metaConfig.start.includes('80%')) {
+        metaConfig.start = metaConfig.start.replace('80%', '85%');
+      }
+
+      const metaTween = gsap.fromTo(meta,
         { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0 },
         {
           clipPath: 'inset(0% 0% 0% 0%)',
@@ -272,14 +361,10 @@
           duration: 1.0,
           ease: 'power3.out',
           delay: 0.1,
-          scrollTrigger: {
-            trigger: triggerEl,
-            containerAnimation: horizontalST?.animation,
-            start: 'left 85%',
-            toggleActions: 'play none none none',
-          },
+          scrollTrigger: metaConfig,
         }
       );
+      if (metaTween.scrollTrigger) slideTriggers.push(metaTween.scrollTrigger);
     }
   }
 
@@ -340,20 +425,31 @@
   // vertical position that puts the target slide in view.
   // ─────────────────────────────────────────────────────────
   window.jumpToChapter = function (index) {
-    if (!lenis || !horizontalST) return;
-
     const slides = document.querySelectorAll('.chapter[data-index]');
     const total  = slides.length;
     if (!total || index < 0) return;
 
-    const clampedIdx  = Math.min(index, total - 1);
-    const progress    = clampedIdx / Math.max(total - 1, 1);
+    const clampedIdx = Math.min(index, total - 1);
+    const slide = slides[clampedIdx];
+    if (!slide) return;
 
-    // The GSAP ScrollTrigger maps its scroll range to [start → end]
-    // We need the corresponding native scroll position.
+    if (isMobileLayout()) {
+      const offset = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--header-height')
+      ) || 56;
+      const top = slide.getBoundingClientRect().top + window.scrollY - offset;
+      if (lenis) {
+        lenis.scrollTo(top, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+      return;
+    }
+
+    if (!lenis || !horizontalST) return;
+
+    const progress = clampedIdx / Math.max(total - 1, 1);
     const st = horizontalST;
-    if (!st) return;
-
     const targetScroll = st.start + progress * (st.end - st.start);
 
     lenis.scrollTo(targetScroll, { immediate: true, duration: 0 });
@@ -430,27 +526,54 @@
   // ─────────────────────────────────────────────────────────
 
   function afterChaptersRendered() {
+    setLayoutMode();
+    teardownFeaturedMotion();
     initHorizontalScroll();
 
-    // Wait 2 RAF ticks for layout to settle before setting up reveals
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         initSlideReveals();
-        ScrollTrigger.refresh();
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
       });
     });
   }
 
+  function handleBreakpointChange() {
+    setLayoutMode();
+    teardownFeaturedMotion();
+
+    requestAnimationFrame(() => {
+      initHorizontalScroll();
+      requestAnimationFrame(() => {
+        initSlideReveals();
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      });
+    });
+  }
+
+  let resizeTimer;
+  function handleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    }, 200);
+  }
+
   function init() {
+    setLayoutMode();
     initLenis();
     initHeroAnimations();
     initFilmGrain();
 
-    // If chapters already rendered (script order), run immediately
+    MOBILE_MQ.addEventListener('change', handleBreakpointChange);
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleBreakpointChange, 300);
+    }, { passive: true });
+
     if (document.querySelector('.chapter')) {
       afterChaptersRendered();
     } else {
-      // Otherwise wait for chapters.js signal
       window.onChaptersRendered = afterChaptersRendered;
     }
   }
