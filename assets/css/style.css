@@ -327,7 +327,7 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
 /* Content positioning variants */
 .slide__content { position:absolute; z-index:5; }
 .slide__content--br {
-  top:clamp(10rem,18vh,14rem);
+  top:clamp(5rem,10vh,8rem);
   right:clamp(3rem,5vw,6rem);
   text-align:right;
   max-width:40%;
@@ -461,10 +461,10 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   text-align:center;
 }
 .slide--type-c .slide__content--center {
-  top:auto;
-  bottom:clamp(2rem,6vh,4rem);
+  top:50%;
+  transform:translate(-50%, -30%);
+  bottom:auto;
   left:50%;
-  transform:translateX(-50%);
   text-align:center;
   max-width:600px;
   background:rgba(0,0,0,0.55);

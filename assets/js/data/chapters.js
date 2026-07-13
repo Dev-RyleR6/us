@@ -16,8 +16,8 @@ const relationshipChapters = [
   {
     chapterNumber: 'I',
     momentTitle: 'Officially Us',
-    momentDate: 'June 14, 2026',
-    layout: 'editorial-cinematic',
+    momentDate: '06/14/2026 - Officially Us',
+    layout: 'editorial-cinematic' ,
     images: [
       'assets/images/06-14-2026/me.jpg',
       'assets/images/06-14-2026/bd2f6f6f-fde8-4faa-b580-de9ceefb03d5.jpg',
@@ -29,40 +29,40 @@ const relationshipChapters = [
   {
     chapterNumber: 'II',
     momentTitle: 'The Smartest Meme Buddy',
-    momentDate: 'High School Days',
+    momentDate: 'Golden Days of Dopes',
     layout: 'editorial-left',
     images: [
       'assets/images/06-14-2026/buddies.jpg', // Replace with a throwback if you have one!
       'assets/images/06-14-2026/buddies1.jpg',
     ],
     songUrl: '',
-    description: 'Who would\'ve thought na kita diay magkadayon lol. Back in high school, meme buddies ra jud ta. You\'ve always been so smart and pretty, but the best part was you actually "know ball" when it comes to high level memes. Di lang ka basta makasabot, kamao pa jud ka mohimo. Never forgot how we used to draw and put text on my printed textbook characters just to plot stupid memes haha.',
+    description: 'Who would\'ve thought na magka-kita diay lol. Back in high school, meme buddies ra jud ta (chekret kras). You\'ve always been so smart and pretty, but the best part was you actually "know ball" when it comes to high level memes. Di lang ka basta makasabot, kabalo pa jud ka mohimo. Never forgot how we used to draw and put text on my printed textbook characters just to plot stupid memes haha.',
   },
 
   {
     chapterNumber: 'III',
     momentTitle: 'From Brainrot to Sunsets',
-    momentDate: 'The Keeping-In-Touch Era',
+    momentDate: 'From Brainrot to Sunsets',
     layout: 'editorial-right',
     images: [
-      'assets/images/reels/random-spam.jpg', 
+      'assets/images/06-14-2026/memes.jpg', 
       'assets/images/06-14-2026/IMG_8219.jpg',
     ],
     songUrl: '',
-    description: 'Even when life got busy, sige gihapon tag chat. Our inbox is literally just a beautiful mess—spamming reels from the most unhinged/racist memes to random sunsets and pets. Halos tanan nalang jud i-send natos usa\'t isa. Plus keeping up our TikTok streaks everyday, automatic na jud na sa routine.',
+    description: 'Even when life got busy, sige gihapon tag chat. Our convos is literally just a beautiful messspamming reels from the most unhinged/racist memes to random sunsets and pets. Halos tanan nalang jud esend nato haha.\ Plus keeping up our TikTok streaks everyday, matic na jud na sa routine.',
   },
 
   {
     chapterNumber: 'IV',
     momentTitle: 'We Ruined the Friendship... In the Best Way',
-    momentDate: 'June 2026',
+    momentDate: 'We Ruined the Friendship... In the Best Way',
     layout: 'editorial-triptych',
     images: [
-      'assets/images/06-14-2026/IMG_8219.jpg',
-      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/hs.jpg',
+      'assets/images/06-14-2026/86854235-97fb-4b27-b7eb-9dd77c6b2362.jpg',
     ],
     songUrl: '',
-    description: 'They say "don\'t risk the friendship" pero deadma, gubaon gihapon ang friendship kay ganahan man ko nimo haha. Honestly the best decision ever. From just bantering and kantsaway all the time, and now uyab na ta. You\'re still my best friend, tralala, but this time ako na gapangga nimo.',
+    description: 'They say "don\'t risk the friendship" pero ikaw mn gd grr(jokez), pero okay ra kay crush mn sd tka sauna pa haha. Honestly the best decision ever. From just bantering and kantsaway all the time, and now uyab na ta. You\'re still my best friend, tralala, but this time ako na palangga nimo. (chasey, pero sige rgd!)',
   },
 
   {
@@ -71,11 +71,11 @@ const relationshipChapters = [
     momentDate: 'Every Day We\'re Apart',
     layout: 'editorial-asymmetric',
     images: [
-      'assets/images/ldr/facetime.jpg', 
-      'assets/images/06-14-2026/IMG_8219.jpg',
+      'assets/images/06-14-2026/missu.jpg', 
+      'assets/images/06-14-2026/missu.jpg',
     ],
     songUrl: '',
-    description: 'It honestly sucks that we don\'t get to meet physically as often as we want because of our studies. LDR is heavy sometimes, but we always pull through via FaceTime dates. Worth it ra gihapon everything because I know you\'re working hard on your end too. Distance can\'t change how much I\'m into you, lovee.',
+    description: 'It honestly sucks that we don\'t get to meet physically as often as we want because of our studies. LDR is heavy sometimes, but we can always pull through chats or calls. Worth it ra gihapon everything because I know you\'re working hard on your end too. Distance can\'t change how much I\'m into you, lovee.',
   },
 
   {
@@ -88,7 +88,7 @@ const relationshipChapters = [
       'assets/images/06-14-2026/ryle.jpg',
     ],
     songUrl: '',
-    description: 'Since layo ta ari sa earth, I found a way para maapil gihapon ta sa space haha. I submitted our names to NASA, so it\'s officially loaded onto the Nancy Grace Roman Space Telescope heading 1 million miles into deep space. Impas gyud ang space telescope kay apil atong "tralala" sa universe haha. Happy 1st monthsary, lovee! To more months with you.',
+    description: 'Since layo ta ari sa earth, We still found a way para maapil gihapon ta sa space haha. Our names are submitted to NASA, so it\'s officially loaded onto the Nancy Grace Roman Space Telescope heading 1 million miles into deep space. Impas jd ang space telescope kay naay dala nga tralala didto sa universe haha... Happy 1st monthsary, lovee!',
   },
 ];
 
