@@ -20,11 +20,12 @@
   // 01. LENIS — Vertical Smooth Scroll
   // ─────────────────────────────────────────────────────────
   let lenis;
-  let horizontalST = null; // the ScrollTrigger for the horizontal section
-  let verticalIO = null;   // IntersectionObserver for mobile vertical layout
-  let slideTriggers = [];  // track slide-related ScrollTriggers for teardown
+  let horizontalST = null;
+  let verticalIO = null;
+  let slideTriggers = [];
+  let currentActiveIndex = -1;
 
-  const MOBILE_MQ = window.matchMedia('(max-width: 768px)');
+  const MOBILE_MQ = window.matchMedia('(max-width: 820px)');
 
   function isMobileLayout() {
     return MOBILE_MQ.matches;
@@ -83,23 +84,28 @@
 
     verticalIO = new IntersectionObserver(
       (entries) => {
+        let best = null;
         entries.forEach((entry) => {
-          if (!entry.isIntersecting || entry.intersectionRatio < 0.45) return;
-
-          const slide = entry.target;
-          const idx = parseInt(slide.getAttribute('data-index'), 10);
-          if (idx === currentActiveIndex) return;
-          currentActiveIndex = idx;
-
-          const songUrl = slide.getAttribute('data-song');
-          if (songUrl && window.audioEngine) {
-            window.audioEngine.crossfadeTo(songUrl);
+          if (!entry.isIntersecting) return;
+          if (!best || entry.intersectionRatio > best.intersectionRatio) {
+            best = entry;
           }
-
-          slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
         });
+        if (!best || best.intersectionRatio < 0.3) return;
+
+        const slide = best.target;
+        const idx = parseInt(slide.getAttribute('data-index'), 10);
+        if (idx === currentActiveIndex) return;
+        currentActiveIndex = idx;
+
+        const songUrl = slide.getAttribute('data-song');
+        if (songUrl && window.audioEngine) {
+          window.audioEngine.crossfadeTo(songUrl);
+        }
+
+        slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
       },
-      { threshold: [0.45, 0.6] }
+      { threshold: [0.3, 0.5, 0.7], rootMargin: '-15% 0px -25% 0px' }
     );
 
     slides.forEach((slide) => verticalIO.observe(slide));
@@ -124,8 +130,16 @@
     slideTriggers = [];
     currentActiveIndex = -1;
 
-    const track = document.getElementById('featured-chapters');
-    if (track) gsap.set(track, { x: 0, clearProps: 'transform' });
+    if (typeof gsap !== 'undefined') {
+      const track = document.getElementById('featured-chapters');
+      if (track) gsap.set(track, { x: 0, clearProps: 'transform' });
+
+      document.querySelectorAll(
+        '.slide__img-wrap, .slide__numeral, .slide__meta, .slide__description .word'
+      ).forEach((el) => {
+        gsap.set(el, { clearProps: 'clipPath,opacity,transform,scale,y' });
+      });
+    }
 
     const progress = document.getElementById('progress-bar');
     if (progress) progress.style.transform = 'scaleX(0)';
@@ -134,10 +148,12 @@
 
   // ─────────────────────────────────────────────────────────
   // 02c. GSAP HORIZONTAL PIN (tablet + desktop)
-  // The #featured section is pinned. GSAP translates
-  // #featured-chapters along the X axis as the user scrolls.
   // ─────────────────────────────────────────────────────────
-  let currentActiveIndex = -1;
+
+  function getHeaderOffset() {
+    const header = document.getElementById('site-header');
+    return header ? header.getBoundingClientRect().height : 64;
+  }
 
   function initHorizontalScroll() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
@@ -153,7 +169,7 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const getWidth = () => track.scrollWidth - window.innerWidth;
+    const getWidth = () => Math.max(0, track.scrollWidth - section.clientWidth);
 
     horizontalST = ScrollTrigger.create({
       trigger: section,
@@ -434,10 +450,7 @@
     if (!slide) return;
 
     if (isMobileLayout()) {
-      const offset = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height')
-      ) || 56;
-      const top = slide.getBoundingClientRect().top + window.scrollY - offset;
+      const top = slide.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
       if (lenis) {
         lenis.scrollTo(top, { duration: 1.2 });
       } else {

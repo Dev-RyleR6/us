@@ -137,15 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────
   // 04. SMOOTH ANCHOR NAV
   // ─────────────────────────────────────────────────────────
+  function getScrollOffset() {
+    const header = document.getElementById('site-header');
+    return header ? header.getBoundingClientRect().height : 64;
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       const target = document.querySelector(link.getAttribute('href'));
       if (!target) return;
       e.preventDefault();
-      const offset = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height')
-      ) || 72;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
       if (window.lenis) {
         window.lenis.scrollTo(top, { duration: 1.8 });
       } else {

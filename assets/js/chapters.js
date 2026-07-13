@@ -129,19 +129,20 @@
         'slide__img--back'
       ) : ''}
 
-      <!-- Left polaroid image -->
-      ${leftPolaroid ? `
-        <div class="slide__img-wrap slide__img--fore-left">
-          <img src="${leftPolaroid}" alt="${chapter.momentTitle} — left photo" loading="lazy" draggable="false">
-        </div>
-      ` : ''}
+      <!-- Polaroid pair -->
+      <div class="slide__polaroids">
+        ${leftPolaroid ? `
+          <div class="slide__img-wrap slide__img--fore-left">
+            <img src="${leftPolaroid}" alt="${chapter.momentTitle} — left photo" loading="lazy" draggable="false">
+          </div>
+        ` : ''}
 
-      <!-- Right polaroid image -->
-      ${rightPolaroid ? `
-        <div class="slide__img-wrap slide__img--fore">
-          <img src="${rightPolaroid}" alt="${chapter.momentTitle} — right photo" loading="lazy" draggable="false">
-        </div>
-      ` : ''}
+        ${rightPolaroid ? `
+          <div class="slide__img-wrap slide__img--fore">
+            <img src="${rightPolaroid}" alt="${chapter.momentTitle} — right photo" loading="lazy" draggable="false">
+          </div>
+        ` : ''}
+      </div>
 
       <!-- Centered text overlay -->
       <div class="slide__content slide__content--center">
