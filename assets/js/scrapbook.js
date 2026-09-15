@@ -5,9 +5,17 @@
   const dialog = document.getElementById('scrapbook-modal');
   if (!chapter || !dialog) return;
   // Use gallery language in the interface while preserving the original chapter data.
-  document.querySelectorAll('#scrapbook-title, [data-open-scrapbook], .scrapbook-cta').forEach(el => {
-    el.textContent = el.textContent.replace(/Scrapbook/gi, 'Memory Gallery').replace(/Open scrapbook/gi, 'Open gallery');
-  });
+  // NOTE: el.textContent = ... destroys child elements — walk text nodes instead.
+  function renameText(el) {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      node.textContent = node.textContent
+        .replace(/Scrapbook/gi, 'Memory Gallery')
+        .replace(/Open scrapbook/gi, 'Open gallery');
+    }
+  }
+  document.querySelectorAll('#scrapbook-title, [data-open-scrapbook], .scrapbook-cta').forEach(renameText);
   const $ = selector => dialog.querySelector(selector);
   const page = $('#scrapbook-page'), canvas = $('#showcase-canvas'), stage = $('.scrapbook-stage');
   const viewport = $('#scrapbook-viewport'), counter = $('#scrapbook-counter'), caption = $('#scrapbook-caption');
