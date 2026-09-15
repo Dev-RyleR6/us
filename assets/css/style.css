@@ -521,12 +521,25 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   width:36px; height:36px; background:var(--color-accent-d);
 }
 @media (hover:none) { #custom-cursor { display:none; } body { cursor:auto; } }
-@media (hover:hover) { body,a,button { cursor:none; } }
+@media (hover:hover) {
+  body,a,button { cursor:none; }
+  /* Restore natural pointer for interactive shelf cards and scrapbook CTA
+     (the custom cursor is hidden inside the modal anyway) */
+  button.milestone-card,
+  a.milestone-card,
+  .scrapbook-cta { cursor:pointer; }
+}
 
-/* ─── ARCHIVE PLACEHOLDER ─────────────────────────────── */
+/* ─── ARCHIVE — Monthsary Shelf ──────────────────────── */
 #archive {
-  min-height:40vh;
-  padding-bottom:calc(var(--chrome-bottom) + 2rem);
+  min-height:50vh;
+  padding-top:clamp(4rem,10vh,7rem);
+  padding-bottom:calc(var(--chrome-bottom) + 3rem);
+}
+#archive .section-label {
+  margin-bottom:0;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--color-border);
 }
 
 /* ─── SOUND TOGGLE ────────────────────────────────────── */
@@ -874,15 +887,75 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
 .scrapbook-covers__first { left:0; top:0; transform:rotate(-5deg); }
 .scrapbook-cta { display:flex; gap:2rem; align-items:center; border:1px solid var(--color-accent); background:var(--color-accent); color:#111; padding:1rem 1.4rem; font:400 12px var(--font-ui); cursor:pointer; margin-bottom:1rem; }
 .scrapbook-cta:hover { background:var(--color-text); }
-.milestone-shelf { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--color-border); }
-.milestone-card { display:flex; flex-direction:column; text-align:left; padding:2.5rem 2rem; border:0; border-bottom:1px solid var(--color-border); background:transparent; color:var(--color-text); font:inherit; }
-.milestone-card + .milestone-card { border-left:1px solid var(--color-border); }
+.milestone-shelf {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--color-border);
+  border-top:none;
+}
+.milestone-card {
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  padding:clamp(1.75rem,3vw,2.5rem) clamp(1.25rem,2.5vw,2rem);
+  border:0;
+  border-top:1px solid var(--color-border);
+  background:transparent;
+  color:var(--color-text);
+  font:inherit;
+  min-height:clamp(240px,28vh,320px);
+  transition:background 200ms ease;
+}
+.milestone-card + .milestone-card {
+  border-left:1px solid var(--color-border);
+}
 button.milestone-card, a.milestone-card { cursor:pointer; }
-.milestone-card h2 { font:400 clamp(1.5rem,2.4vw,2.6rem)/1.2 var(--font-serif); margin:2rem 0 1rem; }
-.milestone-card p { color:#aaa59c; font-size:12px; }
-.milestone-card__action { font-size:11px; margin-top:auto; padding-top:2rem; }
-.milestone-card--reserved { background:#080808; }
-.milestone-card:hover { background:#10100d; }
+.milestone-card h2 {
+  font:400 clamp(1.3rem,2vw,2.2rem)/1.15 var(--font-serif);
+  margin:1.25rem 0 0.75rem;
+  letter-spacing:-0.01em;
+}
+.milestone-card p {
+  color:var(--color-muted);
+  font-size:11px;
+  letter-spacing:0.04em;
+  line-height:1.65;
+}
+.milestone-card__action {
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  margin-top:auto;
+  padding-top:1.75rem;
+  color:var(--color-accent);
+  transition:color 200ms ease;
+}
+a.milestone-card:hover .milestone-card__action,
+button.milestone-card:hover .milestone-card__action {
+  color:var(--color-text);
+}
+/* 2nd Monthsary — reserved / coming soon */
+.milestone-card--reserved {
+  background:#080808;
+  opacity:0.72;
+  cursor:default;
+}
+.milestone-card--reserved h2 {
+  font-style:italic;
+  color:var(--color-muted);
+}
+.milestone-card--reserved p {
+  color:var(--color-dim);
+}
+.milestone-card--reserved .milestone-card__action {
+  color:var(--color-dim);
+  letter-spacing:0.1em;
+}
+/* Hover only for interactive cards */
+button.milestone-card:hover,
+a.milestone-card:hover {
+  background:#10100d;
+}
 .scrapbook-modal { position:fixed; inset:0; width:100%; max-width:none; height:100%; height:100dvh; max-height:none; margin:0; border:0; background:#090908; color:var(--color-text); padding:0; overscroll-behavior:contain; }
 .scrapbook-modal::backdrop { background:#000e; }
 .scrapbook-reader { min-height:100%; padding:20px max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)); display:flex; flex-direction:column; align-items:center; gap:10px; }
@@ -907,8 +980,20 @@ button.milestone-card, a.milestone-card { cursor:pointer; }
   .scrapbook-covers, .reserved-page { width:min(75vw,400px); margin:0 auto; }
   .milestone-copy { max-width:none; }
   .milestone-copy h2 { font-size:2.4rem; }
-  .milestone-shelf { grid-template-columns:1fr; }
-  .milestone-card + .milestone-card { border-left:0; }
+  /* Stack milestone cards vertically on mobile */
+  .milestone-shelf {
+    grid-template-columns:1fr;
+    border-left:none;
+    border-right:none;
+  }
+  .milestone-card {
+    min-height:auto;
+    padding:1.5rem 1.25rem;
+  }
+  .milestone-card + .milestone-card {
+    border-left:0;
+    border-top:1px solid var(--color-border);
+  }
   .scrapbook-reader { padding-top:max(12px,env(safe-area-inset-top)); }
   .scrapbook-reader__header .milestone-label { font-size:8px; }
 }
