@@ -90,6 +90,28 @@ const relationshipChapters = [
     songUrl: '',
     description: 'Since layo ta ari sa earth, We still found a way para maapil gihapon ta sa space haha. Our names are submitted to NASA, so it\'s officially loaded onto the Nancy Grace Roman Space Telescope heading 1 million miles into deep space. Impas jd ang space telescope kay naay dala nga tralala didto sa universe haha... Happy 1st monthsary, lovee!',
   },
+  {
+    chapterNumber: 'VII',
+    momentTitle: 'Volume II · In the Works',
+    momentDate: '08/14/2026 — Second Monthsary',
+    layout: 'editorial-placeholder',
+    isPlaceholder: true,
+    images: [],
+    songUrl: '',
+    description: 'Memories being curated. Room reserved for our 2nd monthsary story. A little space for everything we are still putting into words.',
+  },
+  {
+    chapterNumber: 'VIII',
+    momentTitle: "Lovey’s Scrapbook · Happy 3rd!",
+    momentDate: '09/14/2026 — Our 3rd Monthsary',
+    layout: 'editorial-scrapbook',
+    images: ['assets/images/third/page-01.png', 'assets/images/third/page-11.png'],
+    pdfUrl: 'assets/pdf/_3rd.pdf',
+    totalPages: 11,
+    pageImages: Array.from({ length: 11 }, (_, i) => `assets/images/third/page-${String(i + 1).padStart(2, '0')}.png`),
+    songUrl: '', // Add assets/audio/chapter-03.mp3 here when the track is available.
+    description: 'Our 3rd monthsary. An eleven-page scrapbook by lovey.',
+  },
 ];
 
 // Export for module environments, or expose globally for vanilla HTML

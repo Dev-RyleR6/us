@@ -6,3 +6,5 @@ assets/audio/*
 
 # Ignore all files in the js folder
 js/data/*
+.tools/
+artifacts/

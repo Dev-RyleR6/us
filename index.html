@@ -155,7 +155,12 @@
     <div class="container">
       <div class="section-label reveal">
         <span class="rule--accent"></span>
-        <span class="t-subheading">Cheesy? .............. I know!</span>
+        <span class="t-subheading">The Monthsary Shelf</span>
+      </div>
+      <div class="milestone-shelf">
+        <a class="milestone-card" href="#featured" data-archive-chapter="5"><span class="milestone-label">01 / June–July 2026</span><h2>Our first month.</h2><p>The beginning of everything.</p><span class="milestone-card__action">Revisit Volume I ↗</span></a>
+        <article class="milestone-card milestone-card--reserved"><span class="milestone-label">02 / August 14, 2026</span><h2>Room for us.</h2><p>Volume II · In the Works</p><span class="milestone-card__action">Memories being curated</span></article>
+        <button class="milestone-card milestone-card--scrapbook" data-open-scrapbook><span class="milestone-label">03 / September 14, 2026</span><h2>From lovey, with love.</h2><p>Our 3rd monthsary · Memory gallery</p><span class="milestone-card__action">Open the gallery ↗</span></button>
       </div>
     </div>
   </section>
@@ -177,9 +182,26 @@
   <!-- ═══════════════════════════════════════════════════════
        SCRIPTS — load order matters
   ═══════════════════════════════════════════════════════ -->
+  <dialog id="scrapbook-modal" class="scrapbook-modal memory-gallery-modal" aria-labelledby="scrapbook-title" data-lenis-prevent>
+    <div class="scrapbook-reader">
+      <header class="scrapbook-reader__header"><div><span class="milestone-label">Made by lovey · September 14, 2026</span><h2 id="scrapbook-title">Lovey’s Scrapbook</h2></div><button type="button" data-scrapbook-close autofocus aria-label="Close scrapbook">Close ×</button></header>
+      <div class="story-presets" role="group" aria-label="Choose story length"><button type="button" data-story-preset="highlights" aria-pressed="true">Highlights <small>20 sec</small></button><button type="button" data-story-preset="all" aria-pressed="false">All Pages <small>66 sec</small></button></div>
+      <nav id="story-progress" class="story-progress" aria-label="Story scenes"></nav>
+      <div class="scrapbook-stage"><div id="scrapbook-viewport" aria-label="Original scrapbook page"><div class="scrapbook-sheet"><img id="scrapbook-page" width="1500" height="1500" alt="" draggable="false"></div></div><canvas id="showcase-canvas" width="640" height="640" role="img" aria-label="Third monthsary story"></canvas><p id="scrapbook-error" hidden>This page could not load. Please try again or download the original PDF.</p></div>
+      <div class="story-meta"><p id="scrapbook-counter" role="status" aria-live="polite"></p><span id="story-time" aria-label="Elapsed story time"></span></div>
+      <div class="scrapbook-navigation"><button type="button" data-scrapbook-prev aria-label="Previous scene">←</button><button type="button" id="showcase-play" class="story-primary">Play story ♡</button><button type="button" data-scrapbook-next aria-label="Next scene">→</button><button type="button" id="showcase-restart" aria-label="Restart story">↺</button><button type="button" id="story-read">Open scrapbook</button><button type="button" id="scrapbook-zoom" hidden aria-pressed="false">Zoom 2×</button><button type="button" id="showcase-return" hidden>Back to Story</button></div>
+      <p id="scrapbook-caption" class="scrapbook-caption" hidden></p>
+      <nav id="scrapbook-thumbnails" class="scrapbook-thumbnails" aria-label="Memory gallery images"></nav>
+      <p id="showcase-status" role="status" class="showcase-status"></p>
+      <div class="scrapbook-downloads"><a id="showcase-download" class="scrapbook-download" href="assets/exports/loveys-mini-showcase.gif" download="Loveys-Highlights.gif">Download Highlights GIF ↓</a><a id="scrapbook-download" class="scrapbook-download" href="assets/pdf/_3rd.pdf" download="Loveys-Third-Monthsary.pdf">Original PDF ↓</a></div>
+    </div>
+  </dialog>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/data/chapters.js"></script>
   <script src="assets/js/chapters.js"></script>
+  <script src="assets/js/showcase.js"></script>
+  <script src="assets/js/data/showcase-exports.js"></script>
+  <script src="assets/js/scrapbook.js"></script>
   <script src="assets/js/motion.js"></script>
   <script src="assets/js/audio.js"></script>
 

@@ -185,7 +185,26 @@
   // ─────────────────────────────────────────────────────────
   // DISPATCHER
   // ─────────────────────────────────────────────────────────
+  function buildPlaceholderSlide(chapter) {
+    const el = createSlideWrapper(chapter, 'placeholder');
+    el.innerHTML = `<div class="reserved-page" aria-hidden="true"><span>II</span><small>A story still unfolding</small></div>
+      <div class="milestone-copy">${metaLine(chapter)}<h2>${chapter.momentTitle}</h2>${descPara(chapter)}<span class="milestone-label">Reserved with love</span></div>`;
+    return el;
+  }
+
+  function buildScrapbookSlide(chapter) {
+    const el = createSlideWrapper(chapter, 'scrapbook');
+    el.innerHTML = `<div class="scrapbook-covers">
+      <img class="scrapbook-covers__last" src="${chapter.images[1]}" alt="The scrapbook’s closing love card" loading="lazy" width="1500" height="1500">
+      <img class="scrapbook-covers__first" src="${chapter.images[0]}" alt="Lovey’s third monthsary scrapbook cover" loading="lazy" width="1500" height="1500">
+      </div><div class="milestone-copy">${metaLine(chapter)}<h2>${chapter.momentTitle}</h2>${descPara(chapter)}
+      <button class="scrapbook-cta" data-open-scrapbook>Open Lovey’s Memory Gallery <span>↗</span></button><span class="milestone-label">Volume III · ${chapter.totalPages} images · Made by lovey</span></div>`;
+    return el;
+  }
+
   const layoutToBuilder = {
+    'editorial-placeholder': buildPlaceholderSlide,
+    'editorial-scrapbook': buildScrapbookSlide,
     'editorial-cinematic': buildSlideC,
     'slide-c': buildSlideC,
     'editorial-left': buildSlideA,
