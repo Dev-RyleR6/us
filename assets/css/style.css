@@ -910,6 +910,15 @@ section { padding-top:clamp(5rem,12vh,10rem); padding-bottom:clamp(5rem,12vh,10r
   border-left:1px solid var(--color-border);
 }
 button.milestone-card, a.milestone-card { cursor:pointer; }
+/* Inside a <button>, inline elements don't auto-stack — force block on all children */
+button.milestone-card {
+  width:100%;
+}
+button.milestone-card > * {
+  display:block;
+  width:100%;
+  text-align:left;
+}
 .milestone-card h2 {
   font:400 clamp(1.3rem,2vw,2.2rem)/1.15 var(--font-serif);
   margin:1.25rem 0 0.75rem;
