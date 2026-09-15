@@ -1,4 +1,4 @@
-﻿/* Modal story player and original-page reader. All motion is local and silent. */
+/* Modal story player and original-page reader. All motion is local and silent. */
 (() => {
   'use strict';
   const chapter = window.relationshipChapters.find(item => item.layout === 'editorial-scrapbook');
@@ -201,6 +201,12 @@
     }
     const archive = event.target.closest('[data-archive-chapter]');
     if (archive && window.jumpToChapter) { event.preventDefault(); window.jumpToChapter(Number(archive.dataset.archiveChapter)); }
+  });
+  // Keyboard activation for div[role="button"] triggers (Enter / Space)
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const trigger = event.target.closest('[data-open-scrapbook]');
+    if (trigger && trigger.tagName !== 'BUTTON') { event.preventDefault(); trigger.click(); }
   });
   $('[data-scrapbook-close]').addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => {
