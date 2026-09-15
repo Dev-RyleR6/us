@@ -1096,16 +1096,26 @@ div.milestone-card[role="button"]:hover {
   .scrapbook-download { font-size:9px; }
 }
 
-/* Lovey's red / newsprint / ink palette, scoped to her scrapbook. */
-.slide--scrapbook, .milestone-card--scrapbook, .scrapbook-modal {
+/* Lovey's red / newsprint / ink palette — scoped to the MODAL only, not the shelf card */
+.slide--scrapbook, .scrapbook-modal {
   --color-accent:#ad3b40; --color-text:#eee9df; --color-accent-d:#ad3b4020;
 }
 .slide--scrapbook .scrapbook-covers img { animation:none; }
 .slide--scrapbook .milestone-label, .slide--scrapbook .slide__month { color:#d7cfc2; }
 .slide--scrapbook .scrapbook-cta { background:#a73538; border-color:#a73538; color:#fff4e9; }
-.milestone-card--scrapbook { background:radial-gradient(#b5444422 .7px,transparent .8px) 0 0/6px 6px,#11100f; }
-.milestone-card--scrapbook .milestone-label { color:#d7cfc2; }
-.milestone-card--scrapbook:hover { background-color:#211314; }
+/* Card 3 on the shelf — matches the editorial gold palette of cards 1 & 2 */
+.milestone-card--scrapbook {
+  background:#0d0d0b;
+}
+.milestone-card--scrapbook .milestone-label {
+  color:var(--color-accent); /* gold, same as cards 1 and 2 */
+}
+.milestone-card--scrapbook p {
+  color:var(--color-muted); /* same muted level as card 1 */
+}
+.milestone-card--scrapbook:hover {
+  background:#10100d; /* same hover as card 1 */
+}
 .scrapbook-modal { background:#11100f; }
 .scrapbook-reader__header { border-bottom:1px solid #73635a45; padding-bottom:10px; }
 .scrapbook-reader__header .milestone-label { color:#d4c9ba; }
