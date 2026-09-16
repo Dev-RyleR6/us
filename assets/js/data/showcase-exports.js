@@ -2,23 +2,29 @@
 (function(root) {
   const exports = {
   "highlights": {
-    "bytes": 6559132,
+    "bytes": 7995897,
     "fps": 12,
-    "duration": 20,
+    "duration": 16.5,
     "width": 640,
     "height": 640,
     "pages": [
       1,
+      2,
       3,
+      4,
+      5,
+      6,
+      7,
       8,
+      9,
       10,
       11
     ]
   },
   "all": {
-    "bytes": 8766408,
-    "fps": 8,
-    "duration": 66,
+    "bytes": 8071467,
+    "fps": 12,
+    "duration": 22,
     "width": 640,
     "height": 640,
     "pages": [
@@ -37,5 +43,9 @@
   }
 };
   root.ScrapbookExports = exports;
-  if (typeof module !== 'undefined') module.exports = exports;
+  if (typeof module !== 'undefined' && module.exports) module.exports = exports;
 })(typeof window === 'undefined' ? globalThis : window);
+
+const exports = globalThis.ScrapbookExports;
+export { exports };
+export default exports;
