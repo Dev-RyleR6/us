@@ -72,7 +72,7 @@ const DEFAULT_FONT: CSSProperties = {
 }
 
 const DEFAULTS = {
-    direction: "vertical",
+    direction: "vertical" as const,
     spacing: 2,
     alternate: false,
     cardWidth: 400,

@@ -1,10 +1,21 @@
-# Ignore all files in the images folder
-images/*
-
-# Ignore all files in the audio folder
+# Ignore audio & images folders
 assets/audio/*
+public/assets/audio/*
+images/*
+assets/images/*
+public/assets/images/*
+!assets/images/third/
+!public/assets/images/third/
 
-# Ignore all files in the js folder
+# Ignore files in js folder
 js/data/*
 .tools/
 artifacts/
+
+# Dependencies & build
+node_modules/
+package-lock.json
+dist/
+.vite/
+index.vanilla.html
+
