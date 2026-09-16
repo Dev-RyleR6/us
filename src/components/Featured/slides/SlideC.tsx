@@ -68,3 +68,4 @@ export const SlideC: React.FC<SlideProps> = ({ chapter, index }) => {
     </article>
   );
 };
+

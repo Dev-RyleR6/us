@@ -51,3 +51,4 @@ export const CustomCursor: React.FC = () => {
 
   return <div id="custom-cursor" ref={cursorRef} aria-hidden="true" />;
 };
+

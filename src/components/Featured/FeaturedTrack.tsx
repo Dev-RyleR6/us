@@ -299,3 +299,4 @@ export const FeaturedTrack: React.FC<FeaturedTrackProps> = ({
     </section>
   );
 };
+

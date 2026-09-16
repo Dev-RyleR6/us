@@ -17,6 +17,7 @@ interface Plate {
 
 export interface VerticalParallaxProps {
     items?: ItemInput[]
+    loop?: boolean
 
     background?: string
 
@@ -181,6 +182,7 @@ function placeholderFill(index: number): string {
 }
 
 interface Frame {
+    loop: boolean
     tops: number[]
     heights: number[]
     widths: number[]
@@ -194,6 +196,7 @@ interface Frame {
 
 export default function VerticalParallax({
     items = DEFAULT_ITEMS,
+    loop = true,
     background = DEFAULT_BACKGROUND,
     labels,
     font = DEFAULT_FONT,
@@ -267,7 +270,7 @@ export default function VerticalParallax({
             return { count: 0, tops: [], heights: [], widths: [], span: 0 }
         }
 
-        const blockLength = alternate && n % 2 === 1 ? n * 2 : n
+        const blockLength = loop && alternate && n % 2 === 1 ? n * 2 : n
         let blockSpan = 0
         for (let i = 0; i < blockLength; i += 1)
             blockSpan += extentOf(sizeAt(i))
@@ -275,7 +278,7 @@ export default function VerticalParallax({
 
         const tallest = Math.max(extentOf(evenSize), extentOf(oddSize))
         let count = blockLength
-        if (blockSpan > 0) {
+        if (loop && blockSpan > 0) {
             const need = viewport + tallest * 2
             const repeats = Math.max(1, Math.ceil(need / blockSpan))
             count = blockLength * repeats
@@ -292,9 +295,10 @@ export default function VerticalParallax({
             widths.push(size.width)
             cursor += extentOf(size) + gap
         }
-        return { count, tops, heights, widths, span: cursor }
+        return { count, tops, heights, widths, span: loop ? cursor : cursor - gap }
     }, [
         source.length,
+        loop,
         cardWidth,
         cardHeight,
         alternate,
@@ -304,6 +308,7 @@ export default function VerticalParallax({
     ])
 
     const frame = useRef<Frame>({
+        loop,
         tops: [],
         heights: [],
         widths: [],
@@ -315,6 +320,7 @@ export default function VerticalParallax({
         axisIsY: true,
     })
     frame.current = {
+        loop,
         tops: layout.tops,
         heights: layout.heights,
         widths: layout.widths,
@@ -359,7 +365,11 @@ export default function VerticalParallax({
             last = now
             if (!c.count || c.span <= 0 || c.viewport <= 0) return
 
-            if (current.current > c.span || current.current < -c.span) {
+            if (!c.loop) {
+                const maxScroll = Math.max(0, c.span - c.viewport)
+                target.current = clamp(target.current, 0, maxScroll)
+                current.current = clamp(current.current, 0, maxScroll)
+            } else if (current.current > c.span || current.current < -c.span) {
                 const shift = Math.trunc(current.current / c.span) * c.span
                 current.current -= shift
                 target.current -= shift
@@ -374,7 +384,7 @@ export default function VerticalParallax({
                 const extent = c.axisIsY ? c.heights[i] : c.widths[i]
                 const raw = c.tops[i] - current.current
 
-                const pos = wrap(raw + extent, c.span) - extent
+                const pos = c.loop ? wrap(raw + extent, c.span) - extent : raw
                 row.style.transform = c.axisIsY
                     ? `translate3d(0, ${pos}px, 0)`
                     : `translate3d(${pos}px, 0, 0)`
@@ -419,6 +429,8 @@ export default function VerticalParallax({
         const onWheel = (event: WheelEvent) => {
             event.preventDefault()
             target.current += event.deltaY * input.current.wheelMultiplier
+            if (!frame.current.loop)
+                target.current = clamp(target.current, 0, Math.max(0, frame.current.span - frame.current.viewport))
         }
         node.addEventListener("wheel", onWheel, { passive: false })
         return () => node.removeEventListener("wheel", onWheel)
@@ -445,6 +457,8 @@ export default function VerticalParallax({
             last = value
 
             target.current -= delta * input.current.dragMultiplier
+            if (!frame.current.loop)
+                target.current = clamp(target.current, 0, Math.max(0, frame.current.span - frame.current.viewport))
         }
         const onUp = (event: PointerEvent) => {
             if (pointer !== event.pointerId) return

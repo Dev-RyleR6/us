@@ -18,3 +18,4 @@ export const StatusBar: React.FC = () => {
     </div>
   );
 };
+

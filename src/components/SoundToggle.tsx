@@ -41,3 +41,4 @@ export const SoundToggle: React.FC<SoundToggleProps> = ({ isMuted, onToggle }) =
     </button>
   );
 };
+

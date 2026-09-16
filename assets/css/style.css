@@ -1049,6 +1049,11 @@ div.milestone-card[role="button"]:hover {
 .reader-open #custom-cursor { visibility:hidden; }
 .scrapbook-modal, .scrapbook-modal * { cursor:auto; }
 .memory-gallery-modal { --gallery-red:#a73538; }
+.memory-gallery-modal .scrapbook-reader { height:100%; min-height:0; }
+.memory-gallery-modal .scrapbook-reader > :not(.memory-gallery-stage):not(.deck-gallery-stage) { flex-shrink:0; }
+.memory-gallery-stage, .deck-gallery-stage { position:relative; width:100%; flex:1 1 0; min-height:80px; overflow:hidden; }
+.memory-gallery-stage *, .deck-gallery-stage * { cursor:inherit; }
+#gallery-instructions, #deck-gallery-instructions { font:11px/1.5 var(--font-ui); color:#c6c0b6; text-align:center; margin:4px 0; }
 .scrapbook-modal a, .scrapbook-modal button:not(:disabled) { cursor:pointer; }
 .scrapbook-modal a *, .scrapbook-modal button:not(:disabled) * { cursor:inherit; }
 .scrapbook-modal button:disabled { cursor:default; }

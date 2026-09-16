@@ -67,3 +67,4 @@ export const SlideScrapbook: React.FC<SlideScrapbookProps> = ({
     </article>
   );
 };
+

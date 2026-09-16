@@ -51,3 +51,4 @@ export const SlideA: React.FC<SlideProps> = ({ chapter, index }) => {
     </article>
   );
 };
+

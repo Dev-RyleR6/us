@@ -79,3 +79,4 @@ export const FilmGrain: React.FC = () => {
 
   return <canvas id="film-grain-canvas" ref={canvasRef} aria-hidden="true" />;
 };
+

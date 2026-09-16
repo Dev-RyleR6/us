@@ -40,3 +40,4 @@ export const SlideD: React.FC<SlideProps> = ({ chapter, index }) => {
     </article>
   );
 };
+

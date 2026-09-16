@@ -39,3 +39,4 @@ export function useHeartbeatTimer(): HeartbeatState {
 
   return state;
 }
+

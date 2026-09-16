@@ -1,21 +1,37 @@
-# Ignore audio & images folders
-assets/audio/*
-public/assets/audio/*
+# Ignore all files in the images folder
 images/*
-assets/images/*
-public/assets/images/*
-!assets/images/third/
-!public/assets/images/third/
+# ── Dependencies ──────────────────────────────────────────
+node_modules/
+package-lock.json
 
-# Ignore files in js folder
+# Ignore all files in the audio folder
+# ── Build output ───────────────────────────────────────────
+dist/
+.vite/
+
+# ── Private media assets ───────────────────────────────────
+# Exclude raw personal photos and audio from version control
+assets/images/*
+!assets/images/third/
+assets/audio/*
+
+# Ignore all files in the js folder
 js/data/*
+# ── Generated / exported files ─────────────────────────────
+assets/exports/
+assets/gallery/
+gallery/
+
+# ── Tooling / internal ─────────────────────────────────────
 .tools/
 artifacts/
 
-# Dependencies & build
-node_modules/
-package-lock.json
-dist/
-.vite/
+# ── OS & editor noise ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
 index.vanilla.html
 

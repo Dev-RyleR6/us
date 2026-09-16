@@ -137,3 +137,4 @@ export const ShowcaseCanvas: React.FC<ShowcaseCanvasProps> = ({
     />
   );
 };
+
