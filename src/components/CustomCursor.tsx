@@ -5,7 +5,7 @@ export const CustomCursor: React.FC = () => {
 
   useEffect(() => {
     const cursor = cursorRef.current;
-    if (!cursor) return;
+    if (!cursor || window.matchMedia('(max-width: 820px), (hover: none)').matches) return;
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;

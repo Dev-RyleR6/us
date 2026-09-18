@@ -164,7 +164,7 @@ export function useAudioEngine(initialSongUrl?: string) {
       }
     };
 
-    const UNLOCK_EVENTS = ['click', 'keydown', 'touchstart', 'scroll'];
+    const UNLOCK_EVENTS = ['click', 'keydown', 'touchstart', 'touchend', 'scroll'];
     UNLOCK_EVENTS.forEach((evt) => window.addEventListener(evt, unlock, { passive: true }));
 
     return () => {

@@ -24,7 +24,7 @@ export const ArchiveSection: React.FC<ArchiveSectionProps> = ({
   return (
     <section id="archive" aria-label="Archive">
       <div className="container">
-        <div className="section-label reveal">
+        <div className="section-label">
           <span className="rule--accent" />
           <span className="t-subheading">The Monthsary Shelf</span>
         </div>

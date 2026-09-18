@@ -203,6 +203,12 @@ export const FeaturedTrack: React.FC<FeaturedTrackProps> = ({
 
     // Mobile (<= 820px): Vertical stack
     mm.add('(max-width: 820px)', () => {
+      // Clear desktop GSAP transforms and clip-paths
+      const resetEls = section.querySelectorAll<HTMLElement>(
+        '.slide__img-wrap, .slide__img-wrap img, .slide__numeral, .slide__meta, #horizontal-track, .slide__description .word'
+      );
+      gsap.set(resetEls, { clearProps: 'all' });
+
       const slides = section.querySelectorAll<HTMLElement>('.chapter[data-index]');
       let currentActiveIndex = -1;
 
@@ -215,7 +221,7 @@ export const FeaturedTrack: React.FC<FeaturedTrackProps> = ({
               best = entry;
             }
           });
-          if (!best || (best as IntersectionObserverEntry).intersectionRatio < 0.3) return;
+          if (!best || (best as IntersectionObserverEntry).intersectionRatio < 0.25) return;
 
           const slide = (best as IntersectionObserverEntry).target as HTMLElement;
           const idx = parseInt(slide.getAttribute('data-index') || '0', 10);
@@ -227,7 +233,7 @@ export const FeaturedTrack: React.FC<FeaturedTrackProps> = ({
 
           slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
         },
-        { threshold: [0.3, 0.5, 0.7], rootMargin: '-15% 0px -25% 0px' }
+        { threshold: [0.25, 0.5, 0.75], rootMargin: '-10% 0px -20% 0px' }
       );
 
       slides.forEach((s) => observer.observe(s));
@@ -238,14 +244,15 @@ export const FeaturedTrack: React.FC<FeaturedTrackProps> = ({
         const targetSlide = slides[clamped];
         if (!targetSlide) return;
 
-        const headerOffset = 64;
-        const top = targetSlide.getBoundingClientRect().top + window.scrollY - headerOffset;
+        const headerEl = document.getElementById('site-header');
+        const headerOffset = headerEl ? headerEl.getBoundingClientRect().height : 56;
 
-        const lenis = (window as unknown as { lenis?: { scrollTo: (t: number, opts: unknown) => void } }).lenis;
+        const lenis = (window as unknown as { lenis?: { scrollTo: (target: HTMLElement | number, opts: unknown) => void } }).lenis;
         if (lenis) {
-          lenis.scrollTo(top, { duration: 1.2 });
+          lenis.scrollTo(targetSlide, { offset: -headerOffset, duration: 1.2 });
         } else {
-          window.scrollTo({ top, behavior: 'smooth' });
+          const top = targetSlide.getBoundingClientRect().top + window.scrollY - headerOffset;
+          window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
         }
       };
 

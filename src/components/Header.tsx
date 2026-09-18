@@ -10,14 +10,24 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
     if (onNavigate) {
       onNavigate(targetId);
     } else {
+      const lenis = (window as unknown as { lenis?: { scrollTo: (target: HTMLElement | number, opts: { duration?: number; offset?: number }) => void } }).lenis;
+      if (targetId === 'hero') {
+        if (lenis) {
+          lenis.scrollTo(0, { duration: 1.5 });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        return;
+      }
       const el = document.getElementById(targetId);
       if (el) {
-        const headerOffset = 64;
-        const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
-        if ((window as unknown as { lenis?: { scrollTo: (t: number, opts: { duration: number }) => void } }).lenis) {
-          (window as unknown as { lenis: { scrollTo: (t: number, opts: { duration: number }) => void } }).lenis.scrollTo(top, { duration: 1.8 });
+        const header = document.getElementById('site-header');
+        const headerOffset = header ? header.getBoundingClientRect().height : 56;
+        if (lenis) {
+          lenis.scrollTo(el, { offset: -headerOffset, duration: 1.5 });
         } else {
-          window.scrollTo({ top, behavior: 'smooth' });
+          const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+          window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
         }
       }
     }

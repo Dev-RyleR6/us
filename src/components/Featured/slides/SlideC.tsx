@@ -9,7 +9,7 @@ interface SlideProps {
 export const SlideC: React.FC<SlideProps> = ({ chapter, index }) => {
   const hasThreeImages = chapter.images.length >= 3;
   const leftPolaroid = hasThreeImages ? chapter.images[1] : chapter.images[0];
-  const rightPolaroid = hasThreeImages ? chapter.images[2] : (chapter.images[1] || chapter.images[0]);
+  const rightPolaroid = hasThreeImages ? chapter.images[2] : (chapter.images.length > 1 ? chapter.images[1] : null);
   const backgroundImage = hasThreeImages ? chapter.images[0] : null;
 
   return (

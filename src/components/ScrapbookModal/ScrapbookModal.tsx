@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import VerticalParallax from '../../../components/VerticalParallax';
 import DeckCarousel from '../../../components/DeckCarousel';
 
@@ -7,13 +7,12 @@ const pages = Array.from({ length: 11 }, (_, i) => `assets/images/third/page-${S
 
 export const ScrapbookModal: React.FC<ScrapbookModalProps> = ({ isOpen, onClose }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const galleryRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<'gallery' | 'deck'>('gallery');
   const [cardSize, setCardSize] = useState(0);
-  const deckGalleryRef = useRef<HTMLDivElement>(null);
 
   const scrollDeck = (direction: -1 | 1) => {
-    deckGalleryRef.current?.firstElementChild?.dispatchEvent(
+    stageRef.current?.firstElementChild?.dispatchEvent(
       new CustomEvent('deck-step', { detail: direction })
     );
   };
@@ -41,12 +40,17 @@ export const ScrapbookModal: React.FC<ScrapbookModalProps> = ({ isOpen, onClose 
   }, [isOpen]);
 
   useEffect(() => {
-    const gallery = galleryRef.current;
-    if (!isOpen || mode !== 'gallery' || !gallery) return;
-    const measure = () => setCardSize(Math.max(1, Math.min(640, gallery.clientWidth - 32)));
+    const stage = stageRef.current;
+    if (!isOpen || !stage) return;
+    const measure = () => {
+      const w = stage.clientWidth;
+      if (w > 0) {
+        setCardSize(Math.max(1, Math.min(640, w - 32)));
+      }
+    };
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(gallery);
+    observer.observe(stage);
     return () => observer.disconnect();
   }, [isOpen, mode]);
 
@@ -64,19 +68,27 @@ export const ScrapbookModal: React.FC<ScrapbookModalProps> = ({ isOpen, onClose 
           <button type="button" data-scrapbook-close aria-label="Close scrapbook" onClick={onClose}>Close ×</button>
         </header>
         {mode === 'gallery' ? (
-          <div ref={galleryRef} className="memory-gallery-stage" role="region" aria-label="Memory gallery" aria-describedby="gallery-instructions">
+          <div ref={stageRef} className="memory-gallery-stage" role="region" aria-label="Memory gallery" aria-describedby="gallery-instructions">
             {isOpen && cardSize > 0 && <VerticalParallax items={pages} loop={false} direction="vertical" cardWidth={cardSize} cardHeight={Math.min(560, cardSize)}
               alternate={false} labels={{ show: false }} background="#090908" />}
           </div>
         ) : (
-          <div ref={deckGalleryRef} className="deck-gallery-stage" role="region" aria-label="Deck carousel"
+          <div ref={stageRef} className="deck-gallery-stage" role="region" aria-label="Deck carousel"
             aria-describedby="deck-gallery-instructions" tabIndex={0}
             onKeyDown={(event) => {
               if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
               event.preventDefault();
               scrollDeck(event.key === 'ArrowLeft' ? -1 : 1);
             }}>
-            {isOpen && <DeckCarousel images={pages} count={pages.length} cardWidth={320} cardHeight={320} background="#090908" />}
+            {isOpen && (
+              <DeckCarousel
+                images={pages}
+                count={pages.length}
+                cardWidth={Math.max(180, Math.min(300, cardSize > 0 ? Math.round(cardSize * 0.78) : 240))}
+                cardHeight={Math.max(180, Math.min(300, cardSize > 0 ? Math.round(cardSize * 0.78) : 240))}
+                background="#090908"
+              />
+            )}
           </div>
         )}
         {mode === 'gallery' ? <p id="gallery-instructions">Scroll or drag to explore</p> :

@@ -19,25 +19,27 @@ export const SlideA: React.FC<SlideProps> = ({ chapter, index }) => {
         {chapter.chapterNumber}
       </span>
 
-      <div className="slide__img-wrap slide__img--primary">
-        <img
-          src={chapter.images[0]}
-          alt={`${chapter.momentTitle} — primary photo`}
-          loading="lazy"
-          draggable={false}
-        />
-      </div>
-
-      {chapter.images[1] && (
-        <div className="slide__img-wrap slide__img--secondary">
+      <div className="slide__media-container">
+        <div className="slide__img-wrap slide__img--primary">
           <img
-            src={chapter.images[1]}
-            alt={`${chapter.momentTitle} — second photo`}
+            src={chapter.images[0]}
+            alt={`${chapter.momentTitle} — primary photo`}
             loading="lazy"
             draggable={false}
           />
         </div>
-      )}
+
+        {chapter.images[1] && (
+          <div className="slide__img-wrap slide__img--secondary">
+            <img
+              src={chapter.images[1]}
+              alt={`${chapter.momentTitle} — second photo`}
+              loading="lazy"
+              draggable={false}
+            />
+          </div>
+        )}
+      </div>
 
       <div className="slide__content slide__content--br">
         <div className="slide__meta">
